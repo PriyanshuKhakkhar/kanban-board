@@ -1,4 +1,15 @@
-/* You can add global styles to this file, and also import other style files */
+/* Global styles and Material theme setup */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html, body {
+	height: 100%;
+	margin: 0;
+	font-family: Roboto, "Helvetica Neue", sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	background: #f5f7fb;
+	color: rgba(0,0,0,0.87);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
