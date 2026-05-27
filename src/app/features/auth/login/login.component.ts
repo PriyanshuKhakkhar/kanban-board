@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../auth.service';
 import { 
   FormBuilder,
   FormGroup,
@@ -21,10 +22,12 @@ import { MatDividerModule } from '@angular/material/divider';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
+
 export class LoginComponent {
   loginForm: FormGroup;
+  router: any;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private authService: AuthService) {
     this.loginForm = this.fb.group({
       usernameOrEmail: ['', Validators.required],
       password: ['', Validators.required],
@@ -38,6 +41,14 @@ export class LoginComponent {
       // TODO: perform login
     } else {
       this.loginForm.markAllAsTouched();
+    }
+  }
+
+  onLogin(): void {
+    if (this.loginForm.valid) {
+      const { usernameOrEmail, password} = this.loginForm.value;
+      this.router.navigate(['/dashboard']);
+      // TODO: perform login
     }
   }
 }

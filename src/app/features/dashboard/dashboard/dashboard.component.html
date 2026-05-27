@@ -1,1 +1,132 @@
-<p>dashboard works!</p>
+<app-navbar></app-navbar>
+
+<div class="dashboard-layout">
+  <aside class="sidebar">Sidebar</aside>
+
+  <main class="dashboard-main">
+    <header class="topbar">Kanban Board</header>
+
+    <!-- Board container: 4 responsive columns -->
+    <section class="board-wrapper">
+      <div class="board-container">
+        <!-- To Do -->
+        <div class="board-column col-todo">
+          <div class="column-header">
+            <div class="title-row">
+              <h3>To Do</h3>
+              <span class="count">3</span>
+            </div>
+            <button class="add-card">+ Add card</button>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Design login mockups</div>
+            <div class="card-desc">
+              Create high-fidelity login page variations.
+            </div>
+            <div class="card-meta">
+              <span class="badge priority">P2</span
+              ><span class="date">May 20</span>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Set up routing</div>
+            <div class="card-desc">Add landing and auth routes to router.</div>
+            <div class="card-meta">
+              <span class="badge priority">P3</span
+              ><span class="date">May 18</span>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Audit assets</div>
+            <div class="card-desc">Organize public images and icons.</div>
+            <div class="card-meta">
+              <span class="badge priority">P3</span
+              ><span class="date">May 17</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- In Progress -->
+        <div class="board-column col-inprogress">
+          <div class="column-header">
+            <div class="title-row">
+              <h3>In Progress</h3>
+              <span class="count">2</span>
+            </div>
+            <button class="add-card">+ Add card</button>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Implement dashboard layout</div>
+            <div class="card-desc">Replace placeholders with kanban grid.</div>
+            <div class="card-meta">
+              <span class="badge priority">P1</span
+              ><span class="date">May 27</span>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Polish login UI</div>
+            <div class="card-desc">Tighten spacing and add illustrations.</div>
+            <div class="card-meta">
+              <span class="badge priority">P2</span
+              ><span class="date">May 26</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Review -->
+        <div class="board-column col-review">
+          <div class="column-header">
+            <div class="title-row">
+              <h3>Review</h3>
+              <span class="count">1</span>
+            </div>
+            <button class="add-card">+ Add card</button>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Accessibility pass</div>
+            <div class="card-desc">Keyboard nav and aria labels.</div>
+            <div class="card-meta">
+              <span class="badge priority">P2</span
+              ><span class="date">May 25</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Done -->
+        <div class="board-column col-done">
+          <div class="column-header">
+            <div class="title-row">
+              <h3>Done</h3>
+              <span class="count">2</span>
+            </div>
+            <button class="add-card">+ Add card</button>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Initialize repo</div>
+            <div class="card-desc">Create project and initial commit.</div>
+            <div class="card-meta">
+              <span class="badge priority">P3</span
+              ><span class="date">May 10</span>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Landing hero</div>
+            <div class="card-desc">Add hero section and CTA.</div>
+            <div class="card-meta">
+              <span class="badge priority">P3</span
+              ><span class="date">May 12</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
