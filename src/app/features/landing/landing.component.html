@@ -12,7 +12,8 @@
       <a class="nav-link">Resources</a>
     </nav>
     <div class="toolbar-right">
-      <button mat-raised-button class="primary-cta">Log in</button>
+      <button mat-raised-button class="primary-btn" (click)="gotoLogin()">Log in</button>
+      <button mat-raised-button style="background-color: rgb(0, 101, 255);" (click)="gotoCreateAccount()">Create Account</button>
     </div>
   </mat-toolbar>
 </header>
@@ -184,7 +185,6 @@
         <nav class="footer-nav">
           <a>Product</a>
           <a>Docs</a>
-          <a>Pricing</a>
         </nav>
         <div class="copyright">© 2026 KanbanBoard. All rights reserved.</div>
       </div>

@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-landing',
@@ -29,10 +30,18 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 export class LandingComponent {
   heroForm!: FormGroup;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private router: Router) {
     this.heroForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]]
     });
+  }
+
+  gotoLogin(): void {
+    this.router.navigate(['/login']);
+  }
+
+  gotoCreateAccount() {
+    this.router.navigate(['/signup']);
   }
 
   start() {
