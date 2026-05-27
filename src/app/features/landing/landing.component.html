@@ -1,0 +1,193 @@
+<header class="navbar">
+  <mat-toolbar class="toolbar" color="primary">
+    <div class="toolbar-left">
+      <div class="logo">
+        <div class="logo-mark">KB</div>
+        <span class="brand">KanbanBoard</span>
+      </div>
+    </div>
+    <nav class="toolbar-center">
+      <a class="nav-link">Features</a>
+      <a class="nav-link">Solutions</a>
+      <a class="nav-link">Resources</a>
+    </nav>
+    <div class="toolbar-right">
+      <button mat-raised-button class="primary-cta">Log in</button>
+    </div>
+  </mat-toolbar>
+</header>
+
+<main class="landing-root">
+  <section class="hero">
+    <div class="hero-inner container">
+      <div class="hero-left">
+        <h1 class="hero-title">Organize your work smarter with KanbanBoard</h1>
+        <p class="hero-sub">
+          Manage projects, collaborate with teams, and track progress visually
+          from anywhere.
+        </p>
+
+        <form class="hero-cta" [formGroup]="heroForm" (ngSubmit)="start()">
+          <mat-form-field appearance="outline" class="email-field">
+            <mat-label>Email address</mat-label>
+            <input
+              matInput
+              placeholder="you@company.com"
+              formControlName="email"
+              type="email"
+            />
+          </mat-form-field>
+
+          <div class="cta-actions">
+            <button
+              mat-raised-button
+              class="start-btn"
+              color="primary"
+              type="submit"
+            >
+              Start for Free
+            </button>
+            <a class="watch-demo">Watch Demo</a>
+          </div>
+        </form>
+      </div>
+
+      <div class="hero-right">
+        <div class="mockup">
+          <div class="mockup-bg"></div>
+          <div
+            class="board realistic"
+            role="img"
+            aria-label="Kanban board preview"
+          >
+            <!-- Inline SVG dashboard mockup for guaranteed rendering -->
+            <svg
+              class="dashboard-svg"
+              viewBox="0 0 520 360"
+              xmlns="http://www.w3.org/2000/svg"
+              preserveAspectRatio="xMidYMid meet"
+            >
+              <defs>
+                <linearGradient id="g1" x1="0" x2="1">
+                  <stop offset="0" stop-color="#ffffff" stop-opacity="1" />
+                  <stop offset="1" stop-color="#f3f8ff" stop-opacity="1" />
+                </linearGradient>
+              </defs>
+              <rect
+                x="12"
+                y="12"
+                rx="12"
+                ry="12"
+                width="496"
+                height="336"
+                fill="url(#g1)"
+                stroke="rgba(16,24,40,0.03)"
+              />
+
+              <!-- Column 1 -->
+              <g transform="translate(34,36)">
+                <rect width="140" height="220" rx="10" fill="transparent" />
+                <g transform="translate(6,6)">
+                  <rect
+                    width="128"
+                    height="52"
+                    rx="8"
+                    fill="#fff"
+                    opacity="0.95"
+                    stroke="rgba(16,24,40,0.04)"
+                  />
+                  <circle cx="12" cy="28" r="6" fill="#0052CC" />
+                  <rect y="70" width="100" height="12" rx="6" fill="#eef4ff" />
+                  <rect y="92" width="72" height="12" rx="6" fill="#f7fbff" />
+                </g>
+              </g>
+
+              <!-- Column 2 -->
+              <g transform="translate(200,36)">
+                <rect width="140" height="220" rx="10" fill="transparent" />
+                <g transform="translate(6,6)">
+                  <rect
+                    width="128"
+                    height="52"
+                    rx="8"
+                    fill="#fff"
+                    opacity="0.95"
+                    stroke="rgba(16,24,40,0.04)"
+                  />
+                  <circle cx="12" cy="28" r="6" fill="#7c3aed" />
+                  <rect y="70" width="100" height="12" rx="6" fill="#eef4ff" />
+                  <rect y="94" width="80" height="12" rx="6" fill="#f7fbff" />
+                </g>
+              </g>
+
+              <!-- Column 3 -->
+              <g transform="translate(366,36)">
+                <rect width="120" height="220" rx="10" fill="transparent" />
+                <g transform="translate(6,6)">
+                  <rect
+                    width="108"
+                    height="52"
+                    rx="8"
+                    fill="#fff"
+                    opacity="0.95"
+                    stroke="rgba(16,24,40,0.04)"
+                  />
+                  <circle cx="12" cy="28" r="6" fill="#06b6d4" />
+                </g>
+              </g>
+            </svg>
+          </div>
+          <div class="floating-card f1"></div>
+          <div class="floating-card f2"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="features container">
+    <h3 class="section-heading">Powerful features to move faster</h3>
+    <div class="feature-grid">
+      <article class="feature-card">
+        <mat-icon>swap_horiz</mat-icon>
+        <h4>Drag & Drop Tasks</h4>
+        <p>Rearrange work quickly with an intuitive drag & drop experience.</p>
+      </article>
+
+      <article class="feature-card">
+        <mat-icon>groups</mat-icon>
+        <h4>Team Collaboration</h4>
+        <p>Share boards, comment on tasks, and align your team seamlessly.</p>
+      </article>
+
+      <article class="feature-card">
+        <mat-icon>sync</mat-icon>
+        <h4>Real-Time Updates</h4>
+        <p>See changes instantly with live updates across your team.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="cta container">
+    <h3>Boost your team productivity today</h3>
+    <button mat-raised-button color="primary" class="create-workspace">
+      Create Workspace
+    </button>
+  </section>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-left">
+        <div class="logo small">KB</div>
+        <div class="brand">KanbanBoard</div>
+      </div>
+      <div class="footer-right">
+        <nav class="footer-nav">
+          <a>Product</a>
+          <a>Docs</a>
+          <a>Pricing</a>
+        </nav>
+        <div class="copyright">© 2026 KanbanBoard. All rights reserved.</div>
+      </div>
+    </div>
+  </footer>
+</main>

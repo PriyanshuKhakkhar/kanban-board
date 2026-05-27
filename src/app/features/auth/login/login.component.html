@@ -3,27 +3,50 @@
     <h2 class="brand">Kanban Board</h2>
 
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
-
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Username or Email</mat-label>
-        <input matInput type="text" formControlName="usernameOrEmail" autocomplete="username" />
-        <mat-error *ngIf="loginForm.get('usernameOrEmail')?.hasError('required') && loginForm.get('usernameOrEmail')?.touched">
+        <input
+          matInput
+          type="text"
+          formControlName="usernameOrEmail"
+          autocomplete="username"
+        />
+        <mat-error
+          *ngIf="
+            loginForm.get('usernameOrEmail')?.hasError('required') &&
+            loginForm.get('usernameOrEmail')?.touched
+          "
+        >
           Username or email is required
         </mat-error>
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Password</mat-label>
-        <input matInput type="password" formControlName="password" autocomplete="current-password" />
-        <mat-error *ngIf="loginForm.get('password')?.hasError('required') && loginForm.get('password')?.touched">
+        <input
+          matInput
+          type="password"
+          formControlName="password"
+          autocomplete="current-password"
+        />
+        <mat-error
+          *ngIf="
+            loginForm.get('password')?.hasError('required') &&
+            loginForm.get('password')?.touched
+          "
+        >
           Password is required
         </mat-error>
       </mat-form-field>
 
-      <button mat-raised-button color="primary" class="full-width login-btn" type="submit">
+      <button
+        mat-raised-button
+        color="primary"
+        class="full-width login-btn"
+        type="submit"
+      >
         Log in
       </button>
-
     </form>
   </mat-card>
 </div>
