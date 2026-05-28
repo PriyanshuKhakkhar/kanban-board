@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../auth.service';
+import { Router } from '@angular/router';
 import { 
   FormBuilder,
   FormGroup,
@@ -25,9 +26,9 @@ import { MatDividerModule } from '@angular/material/divider';
 
 export class LoginComponent {
   loginForm: FormGroup;
-  router: any;
+  
 
-  constructor(private fb: FormBuilder, private authService: AuthService) {
+  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
     this.loginForm = this.fb.group({
       usernameOrEmail: ['', Validators.required],
       password: ['', Validators.required],
@@ -50,5 +51,15 @@ export class LoginComponent {
       this.router.navigate(['/dashboard']);
       // TODO: perform login
     }
+  }
+  onLoginWithGoogle(): void {
+    if (this.loginForm.valid) {
+      this.router.navigate(['/dashboard']);
+    }
+  }
+
+  onCreateAccount(event?: Event): void {
+    event?.preventDefault();
+    this.router.navigate(['/register']);
   }
 }

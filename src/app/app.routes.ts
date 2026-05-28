@@ -21,9 +21,9 @@ export const routes: Routes = [
         .then(m => m.DashboardComponent)
   },
   {
-    path: 'board',
+    path: 'register',
     loadComponent: () =>
-      import('./features/board/kanban-board/kanban-board.component')
-        .then(m => m.KanbanBoardComponent)
+      import('./features/auth/register/register.component')
+        .then(m => m.RegisterComponent)
   }
 ];

@@ -40,8 +40,8 @@ export class LandingComponent {
     this.router.navigate(['/login']);
   }
 
-  gotoCreateAccount() {
-    this.router.navigate(['/signup']);
+  onCreateAccount() {
+    this.router.navigate(['/register']);
   }
 
   start() {
