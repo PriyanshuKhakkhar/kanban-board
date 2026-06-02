@@ -53,4 +53,42 @@
       Create
     </button>
   </div>
+
+  <div class="nav-actions">
+    <!-- Notifications -->
+    <button
+      mat-icon-button
+      class="notif-btn"
+      [matMenuTriggerFor]="notifMenu"
+      aria-label="Notifications"
+    >
+      <mat-icon>notifications_none</mat-icon>
+      <span class="notif-badge" *ngIf="notificationsCount > 0">{{
+        notificationsCount
+      }}</span>
+    </button>
+
+    <!-- Profile Avatar -->
+    <button
+      mat-button
+      class="profile-btn"
+      [matMenuTriggerFor]="profileMenu"
+      aria-label="Profile"
+    >
+      <div class="profile-avatar">{{ userInitials }}</div>
+    </button>
+
+    <mat-menu #notifMenu="matMenu">
+      <div class="notif-list">
+        <div class="notif-item">No new notifications</div>
+      </div>
+    </mat-menu>
+
+    <mat-menu #profileMenu="matMenu">
+      <button mat-menu-item>My Profile</button>
+      <button mat-menu-item>Settings</button>
+      <mat-divider></mat-divider>
+      <button mat-menu-item (click)="onLogout()">Logout</button>
+    </mat-menu>
+  </div>
 </div>

@@ -32,20 +32,36 @@
     padding: 24px;
 }
 
-.topbar {
-    height: 64px;
-    display:flex;
-    align-items:center;
-    padding: 0 20px;
-    background: transparent;
-    color: #0f1724;
-    font-weight: 700;
-    font-size: 18px;
-    margin-bottom: 18px;
+.board-header {
+  max-width: 1300px;
+  margin: 0 auto 12px;
+  padding: 12px 18px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(16,24,40,0.06);
 }
 
+.board-header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.board-title { display:flex; align-items:center; gap:12px; }
+.board-icon { width:44px; height:44px; display:flex; align-items:center; justify-content:center; border-radius:8px; background: linear-gradient(90deg,#0052CC,#7C3AED); color:#fff; }
+.board-icon mat-icon { font-size:20px; }
+.board-text { display:flex; flex-direction:column; }
+.board-name { font-size:18px; font-weight:800; color:#0f1724; }
+.board-sub { font-size:12px; color:#6b7280; margin-top:2px; }
+
+.board-actions { display:flex; align-items:center; gap:8px; }
+.board-actions .action-btn { color:#374151; }
+.board-actions .label { margin-left:6px; }
+.header-divider { margin-top:12px; }
+
 .board-wrapper {
-  padding: 12px 0 24px;
+  padding: 6px 0 18px; /* reduce whitespace above columns */
 }
 
 .board-container {
@@ -91,10 +107,28 @@
 .date { margin-left:auto; }
 
 /* Column left-border colors */
-.col-todo .card { border-left-color: #0052CC; }
-.col-inprogress .card { border-left-color: #F97316; }
-.col-review .card { border-left-color: #DB2777; }
+.col-todo { border-left: 6px solid #3B82F6; }
+.col-inprogress { border-left: 6px solid #F59E0B; }
+.col-review { border-left: 6px solid #8B5CF6; }
+.col-done { border-left: 6px solid #10B981; }
+
+/* Gentle header backgrounds and subtle card accent colors */
+.col-todo .column-header { background: #E8F1FF; border-radius: 12px; padding: 10px; }
+.col-inprogress .column-header { background: #FFF4E5; border-radius: 12px; padding: 10px; }
+.col-review .column-header { background: #F3E8FF; border-radius: 12px; padding: 10px; }
+.col-done .column-header { background: #E8F8EE; border-radius: 12px; padding: 10px; }
+
+/* Keep task cards white but add subtle left accent for quick scanning */
+.col-todo .card { border-left-color: #3B82F6; }
+.col-inprogress .card { border-left-color: #F59E0B; }
+.col-review .card { border-left-color: #8B5CF6; }
 .col-done .card { border-left-color: #10B981; }
+
+/* Ensure header text remains readable */
+.col-todo .column-header h3,
+.col-inprogress .column-header h3,
+.col-review .column-header h3,
+.col-done .column-header h3 { color: #0f1724; }
 
 @media (max-width: 1100px) {
   .board-container { grid-template-columns: repeat(2, minmax(220px, 1fr)); }

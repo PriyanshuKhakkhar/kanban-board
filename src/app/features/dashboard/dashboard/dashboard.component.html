@@ -31,8 +31,89 @@
   </aside>
 
   <main class="dashboard-main">
-    <header class="topbar">
-      {{ (active$ | async)?.name || "Kanban Board" }}
+    <header
+      class="board-header"
+      *ngIf="active$ | async as active; else noBoard"
+    >
+      <div class="board-header-inner">
+        <div class="board-title">
+          <div class="board-icon">
+            <mat-icon>dashboard</mat-icon>
+          </div>
+          <div class="board-text">
+            <div class="board-name">{{ active.name }}</div>
+            <div class="board-sub">Active Board</div>
+          </div>
+        </div>
+
+        <div class="board-actions">
+          <button
+            mat-button
+            class="action-btn"
+            (click)="openBoardDetails(active)"
+          >
+            <mat-icon>info</mat-icon>
+            <span class="label">Board Details</span>
+          </button>
+
+          <button
+            mat-button
+            [matMenuTriggerFor]="filterMenu"
+            class="action-btn"
+          >
+            <mat-icon>filter_list</mat-icon>
+            <span class="label">Filter</span>
+          </button>
+
+          <button
+            mat-icon-button
+            color="primary"
+            (click)="toggleFavoriteBoard(active)"
+            [attr.aria-pressed]="active.favorite"
+          >
+            <mat-icon>{{ active.favorite ? "star" : "star_border" }}</mat-icon>
+          </button>
+
+          <button mat-icon-button [matMenuTriggerFor]="moreMenu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <mat-menu #filterMenu="matMenu">
+        <button mat-menu-item (click)="applyFilter('Overdue')">Overdue</button>
+        <button mat-menu-item (click)="applyFilter('Due Today')">
+          Due Today
+        </button>
+        <button mat-menu-item (click)="applyFilter('Due This Week')">
+          Due This Week
+        </button>
+        <mat-divider></mat-divider>
+        <button mat-menu-item (click)="applyFilter('High Priority')">
+          High Priority
+        </button>
+        <button mat-menu-item (click)="applyFilter('Medium Priority')">
+          Medium Priority
+        </button>
+        <button mat-menu-item (click)="applyFilter('Low Priority')">
+          Low Priority
+        </button>
+      </mat-menu>
+
+      <mat-menu #moreMenu="matMenu">
+        <button mat-menu-item (click)="renameBoard(active)">
+          Rename Board
+        </button>
+        <button mat-menu-item (click)="duplicateBoard(active)">
+          Duplicate Board
+        </button>
+        <mat-divider></mat-divider>
+        <button mat-menu-item (click)="deleteBoard(active)">
+          Delete Board
+        </button>
+      </mat-menu>
+
+      <mat-divider class="header-divider"></mat-divider>
     </header>
 
     <!-- Board container: 4 responsive columns -->

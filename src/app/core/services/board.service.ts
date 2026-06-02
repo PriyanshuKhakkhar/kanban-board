@@ -7,6 +7,7 @@ export interface Board {
   id: number;
   name: string;
   createdAt: string;
+  favorite?: boolean;
   columns?: {
     todo: Task[];
     inprogress: Task[];
@@ -29,6 +30,7 @@ export class BoardService {
   addBoard(board: Board) {
     const b: Board = {
       ...board,
+      favorite: board.favorite || false,
       columns: {
         todo: [],
         inprogress: [],
@@ -40,6 +42,36 @@ export class BoardService {
     this.boardsSubject.next(next);
     // set newly created board as active
     this.activeSubject.next(b);
+  }
+
+  toggleFavorite(boardId: number) {
+    const boards = this.boards.map(b => b.id === boardId ? { ...b, favorite: !b.favorite } : b);
+    this.boardsSubject.next(boards);
+    const active = this.activeSubject.getValue();
+    if (active && active.id === boardId) {
+      this.activeSubject.next(boards.find(x => x.id === boardId) || null);
+    }
+  }
+
+  deleteBoard(boardId: number) {
+    const boards = this.boards.filter(b => b.id !== boardId);
+    this.boardsSubject.next(boards);
+    const active = this.activeSubject.getValue();
+    if (active && active.id === boardId) {
+      this.activeSubject.next(boards.length ? boards[0] : null);
+    }
+  }
+
+  duplicateBoard(boardId: number) {
+    const found = this.boards.find(b => b.id === boardId);
+    if (!found) return;
+    const copy: Board = {
+      ...found,
+      id: Math.max(0, ...this.boards.map(b => b.id)) + 1,
+      name: `${found.name} (Copy)`,
+      createdAt: new Date().toISOString(),
+    };
+    this.boardsSubject.next([...this.boards, copy]);
   }
 
   setActive(boardId: number) {

@@ -6,11 +6,15 @@ import { BoardService, Board } from '../../../core/services/board.service';
 import { Observable } from 'rxjs';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { CreateBoardDialogComponent } from '../../../shared/components/create-board-dialog/create-board-dialog.component';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDividerModule } from '@angular/material/divider';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, NavbarComponent, RouterModule, MatDialogModule],
+  imports: [CommonModule, NavbarComponent, RouterModule, MatDialogModule, MatIconModule, MatMenuModule, MatButtonModule, MatDividerModule],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
@@ -21,6 +25,45 @@ export class DashboardComponent {
   constructor(private boardService: BoardService, private router: Router, private dialog: MatDialog) {
     this.boards$ = this.boardService.boards$;
     this.active$ = this.boardService.active$;
+  }
+
+  toggleFavoriteBoard(b: Board | null) {
+    if (!b) return;
+    this.boardService.toggleFavorite(b.id);
+  }
+
+  applyFilter(filter: string) {
+    // simple placeholder: in future implement real filtering
+    console.log('Apply filter:', filter);
+  }
+
+  openBoardDetails(b: Board | null) {
+    if (!b) return;
+    // simple details panel: keep implementation minimal for now
+    alert(`Board: ${b.name}\nCreated: ${b.createdAt}`);
+  }
+
+  renameBoard(b: Board | null) {
+    if (!b) return;
+    const name = prompt('Rename board', b.name);
+    if (!name) return;
+    const boards = (this.boards$ as any); // not changing service shape here; keep simple
+    // naive approach: update via internal boards array
+    const current = this.boardService.boards;
+    const updated = current.map(x => x.id === b.id ? { ...x, name } : x);
+    (this.boardService as any).boardsSubject.next(updated);
+    this.boardService.setActive(b.id);
+  }
+
+  duplicateBoard(b: Board | null) {
+    if (!b) return;
+    this.boardService.duplicateBoard(b.id);
+  }
+
+  deleteBoard(b: Board | null) {
+    if (!b) return;
+    if (!confirm(`Delete board "${b.name}"? This cannot be undone.`)) return;
+    this.boardService.deleteBoard(b.id);
   }
 
   setActive(b: Board) {
