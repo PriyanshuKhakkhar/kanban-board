@@ -106,6 +106,55 @@
 .badge.priority { background: rgba(15,23,42,0.06); padding:4px 8px; border-radius:10px; font-weight:700; }
 .date { margin-left:auto; }
 
+/* Task card action icons (hidden until hover) */
+.card { position: relative; }
+.card-actions {
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  transform: translateY(-50%) translateY(-4px);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  opacity: 0;
+  transition: opacity .12s ease, transform .12s ease;
+}
+.card:hover .card-actions {
+  opacity: 1;
+  transform: translateY(-50%) translateY(0);
+}
+.card-actions .action-btn {
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  outline: none;
+  width: 16px;
+  height: 16px;
+  color: #6B7280;
+  transition: color 0.12s ease;
+
+  .icon {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    fill: none;
+  }
+
+  &.edit:hover {
+    color: #2563EB;
+  }
+
+  &.delete:hover {
+    color: #DC2626;
+  }
+}
+
 /* Column left-border colors */
 .col-todo { border-left: 6px solid #3B82F6; }
 .col-inprogress { border-left: 6px solid #F59E0B; }
@@ -119,16 +168,75 @@
 .col-done .column-header { background: #E8F8EE; border-radius: 12px; padding: 10px; }
 
 /* Keep task cards white but add subtle left accent for quick scanning */
-.col-todo .card { border-left-color: #3B82F6; }
-.col-inprogress .card { border-left-color: #F59E0B; }
-.col-review .card { border-left-color: #8B5CF6; }
-.col-done .card { border-left-color: #10B981; }
+.card.todo-card { border-left-color: #3B82F6; }
+.card.inprogress-card { border-left-color: #F59E0B; }
+.card.review-card { border-left-color: #8B5CF6; }
+.card.done-card { border-left-color: #10B981; }
 
 /* Ensure header text remains readable */
 .col-todo .column-header h3,
 .col-inprogress .column-header h3,
 .col-review .column-header h3,
 .col-done .column-header h3 { color: #0f1724; }
+
+/* Cards list container in columns */
+.cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 100px;
+  flex-grow: 1;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+  border: 1px dashed transparent;
+  border-radius: 12px;
+}
+
+/* Highlight target column when hovering a card over it */
+.cards-list:has(.cdk-drag-placeholder) {
+  background-color: rgba(37, 99, 235, 0.03);
+  border-color: rgba(37, 99, 235, 0.3);
+}
+
+/* CDK Drag & Drop animations & preview styling */
+.cdk-drop-list-dragging .cdk-drag {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.cdk-drag-animating {
+  transition: transform 300ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.cdk-drag-placeholder {
+  opacity: 0.4;
+  border: 2px dashed #cbd5e1;
+  background: #f8fafc;
+  min-height: 50px;
+}
+
+.cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  background: #ffffff;
+  padding: 12px 14px;
+  border-left: 6px solid transparent;
+  
+  /* Inherit the colors when dragging */
+  &.todo-card { border-left-color: #3B82F6; }
+  &.inprogress-card { border-left-color: #F59E0B; }
+  &.review-card { border-left-color: #8B5CF6; }
+  &.done-card { border-left-color: #10B981; }
+
+  .card-title {
+    font-weight: 700;
+    color: #0f1724;
+    margin-bottom: 6px;
+  }
+
+  .card-actions {
+    display: none !important;
+  }
+}
 
 @media (max-width: 1100px) {
   .board-container { grid-template-columns: repeat(2, minmax(220px, 1fr)); }

@@ -10,11 +10,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
+import { DragDropModule, CdkDragDrop } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, NavbarComponent, RouterModule, MatDialogModule, MatIconModule, MatMenuModule, MatButtonModule, MatDividerModule],
+  imports: [CommonModule, NavbarComponent, RouterModule, MatDialogModule, MatIconModule, MatMenuModule, MatButtonModule, MatDividerModule, DragDropModule],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
@@ -85,6 +86,22 @@ export class DashboardComponent {
   ngOnInit(): void {
     this.boardService.active$.subscribe(b => (this.currentBoard = b));
   }
+  
+  editTask(column: 'todo' | 'inprogress' | 'review' | 'done', index: number, task: { title: string }) {
+    if (!this.currentBoard) return;
+    const newTitle = prompt('Edit task title', task.title);
+    if (newTitle === null) return; // cancelled
+    const trimmed = newTitle.trim();
+    if (!trimmed) return;
+    this.boardService.updateTask(this.currentBoard.id, column, index, trimmed);
+  }
+
+  deleteTask(column: 'todo' | 'inprogress' | 'review' | 'done', index: number, task: { title: string }) {
+    if (!this.currentBoard) return;
+    const ok = confirm(`Delete task "${task.title}"?`);
+    if (!ok) return;
+    this.boardService.deleteTask(this.currentBoard.id, column, index);
+  }
   addCard(column: string): void {
       console.log(`Add card to ${column} column`);
   }
@@ -113,6 +130,21 @@ export class DashboardComponent {
     this.boardService.addTask(this.currentBoard.id, column, text);
     // hide input for the column after adding
     this.showAddInput[column] = false;
+  }
+
+  drop(event: CdkDragDrop<any[]>) {
+    if (!this.currentBoard) return;
+    
+    const previousColumn = event.previousContainer.id as 'todo' | 'inprogress' | 'review' | 'done';
+    const currentColumn = event.container.id as 'todo' | 'inprogress' | 'review' | 'done';
+    
+    this.boardService.moveTask(
+      this.currentBoard.id,
+      previousColumn,
+      currentColumn,
+      event.previousIndex,
+      event.currentIndex
+    );
   }
 }
 

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 
 export interface Task { title: string }
 
@@ -95,6 +96,74 @@ export class BoardService {
     if (active && active.id === boardId) {
       const updated = boards.find(x => x.id === boardId) || null;
       this.activeSubject.next(updated);
+    }
+  }
+
+  updateTask(boardId: number, column: keyof NonNullable<Board['columns']>, index: number, title: string) {
+    const boards = this.boards.map(b => {
+      if (b.id !== boardId) return b;
+      const copy: Board = { ...b, columns: { ...(b.columns as any) } };
+      const col = ((copy.columns as any)[column] || []).slice();
+      if (index >= 0 && index < col.length) {
+        col[index] = { ...col[index], title };
+      }
+      (copy.columns as any)[column] = col;
+      return copy;
+    });
+    this.boardsSubject.next(boards);
+    const active = this.activeSubject.getValue();
+    if (active && active.id === boardId) {
+      this.activeSubject.next(boards.find(x => x.id === boardId) || null);
+    }
+  }
+
+  deleteTask(boardId: number, column: keyof NonNullable<Board['columns']>, index: number) {
+    const boards = this.boards.map(b => {
+      if (b.id !== boardId) return b;
+      const copy: Board = { ...b, columns: { ...(b.columns as any) } };
+      const col = ((copy.columns as any)[column] || []).slice();
+      if (index >= 0 && index < col.length) {
+        col.splice(index, 1);
+      }
+      (copy.columns as any)[column] = col;
+      return copy;
+    });
+    this.boardsSubject.next(boards);
+    const active = this.activeSubject.getValue();
+    if (active && active.id === boardId) {
+      this.activeSubject.next(boards.find(x => x.id === boardId) || null);
+    }
+  }
+
+  moveTask(
+    boardId: number,
+    previousColumn: keyof NonNullable<Board['columns']>,
+    currentColumn: keyof NonNullable<Board['columns']>,
+    previousIndex: number,
+    currentIndex: number
+  ) {
+    const boards = this.boards.map(b => {
+      if (b.id !== boardId) return b;
+      const copy: Board = { ...b, columns: { ...(b.columns as any) } };
+      
+      const prevCol = ((copy.columns as any)[previousColumn] || []).slice();
+      const currCol = previousColumn === currentColumn ? prevCol : ((copy.columns as any)[currentColumn] || []).slice();
+      
+      if (previousColumn === currentColumn) {
+        moveItemInArray(prevCol, previousIndex, currentIndex);
+        (copy.columns as any)[previousColumn] = prevCol;
+      } else {
+        transferArrayItem(prevCol, currCol, previousIndex, currentIndex);
+        (copy.columns as any)[previousColumn] = prevCol;
+        (copy.columns as any)[currentColumn] = currCol;
+      }
+      return copy;
+    });
+    this.boardsSubject.next(boards);
+    
+    const active = this.activeSubject.getValue();
+    if (active && active.id === boardId) {
+      this.activeSubject.next(boards.find(x => x.id === boardId) || null);
     }
   }
 }
