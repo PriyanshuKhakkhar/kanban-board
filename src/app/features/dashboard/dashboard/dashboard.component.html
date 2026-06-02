@@ -1,20 +1,52 @@
 <app-navbar></app-navbar>
 
 <div class="dashboard-layout">
-  <aside class="sidebar">Sidebar</aside>
+  <aside class="sidebar">
+    <nav class="sidebar-nav">
+      <a routerLink="/dashboard" routerLinkActive="active" class="nav-item"
+        >Home</a
+      >
+      <a routerLink="/boards" routerLinkActive="active" class="nav-item"
+        >Boards</a
+      >
+
+      <div class="sidebar-section">
+        <div class="section-title">MY BOARDS</div>
+        <div class="boards-list">
+          <div
+            *ngFor="let b of boards$ | async"
+            class="board-item"
+            [class.active]="(active$ | async)?.id === b.id"
+            (click)="setActive(b)"
+          >
+            {{ b.name }}
+          </div>
+        </div>
+
+        <button class="create-board-btn" (click)="openCreateDialog()">
+          + Create Board
+        </button>
+      </div>
+    </nav>
+  </aside>
 
   <main class="dashboard-main">
-    <header class="topbar">Kanban Board</header>
+    <header class="topbar">
+      {{ (active$ | async)?.name || "Kanban Board" }}
+    </header>
 
     <!-- Board container: 4 responsive columns -->
     <section class="board-wrapper">
-      <div class="board-container">
+      <div
+        *ngIf="active$ | async as active; else noBoard"
+        class="board-container"
+      >
         <!-- To Do -->
         <div class="board-column col-todo">
           <div class="column-header">
             <div class="title-row">
               <h3>To Do</h3>
-              <span class="count">{{ todoTasks.length }}</span>
+              <span class="count">{{ active.columns?.todo?.length || 0 }}</span>
             </div>
             <button class="add-card" (click)="toggleAdd('todo')">
               + Add card
@@ -43,7 +75,7 @@
             </div>
           </div>
 
-          <div *ngFor="let task of todoTasks" class="card">
+          <div *ngFor="let task of active.columns?.todo || []" class="card">
             <div class="card-title">{{ task.title }}</div>
           </div>
         </div>
@@ -53,7 +85,9 @@
           <div class="column-header">
             <div class="title-row">
               <h3>In Progress</h3>
-              <span class="count">{{ inprogressTasks.length }}</span>
+              <span class="count">{{
+                active.columns?.inprogress?.length || 0
+              }}</span>
             </div>
             <button class="add-card" (click)="toggleAdd('inprogress')">
               + Add card
@@ -86,7 +120,10 @@
             </div>
           </div>
 
-          <div *ngFor="let task of inprogressTasks" class="card">
+          <div
+            *ngFor="let task of active.columns?.inprogress || []"
+            class="card"
+          >
             <div class="card-title">{{ task.title }}</div>
           </div>
         </div>
@@ -96,7 +133,9 @@
           <div class="column-header">
             <div class="title-row">
               <h3>Review</h3>
-              <span class="count">{{ reviewTasks.length }}</span>
+              <span class="count">{{
+                active.columns?.review?.length || 0
+              }}</span>
             </div>
             <button class="add-card" (click)="toggleAdd('review')">
               + Add card
@@ -128,7 +167,7 @@
             </div>
           </div>
 
-          <div *ngFor="let task of reviewTasks" class="card">
+          <div *ngFor="let task of active.columns?.review || []" class="card">
             <div class="card-title">{{ task.title }}</div>
           </div>
         </div>
@@ -138,7 +177,7 @@
           <div class="column-header">
             <div class="title-row">
               <h3>Done</h3>
-              <span class="count">{{ doneTasks.length }}</span>
+              <span class="count">{{ active.columns?.done?.length || 0 }}</span>
             </div>
             <button class="add-card" (click)="toggleAdd('done')">
               + Add card
@@ -167,11 +206,16 @@
             </div>
           </div>
 
-          <div *ngFor="let task of doneTasks" class="card">
+          <div *ngFor="let task of active.columns?.done || []" class="card">
             <div class="card-title">{{ task.title }}</div>
           </div>
         </div>
       </div>
+      <ng-template #noBoard>
+        <div class="no-board" style="padding: 24px">
+          No board selected. Create or choose a board.
+        </div>
+      </ng-template>
     </section>
   </main>
 </div>

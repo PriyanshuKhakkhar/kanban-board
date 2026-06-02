@@ -1,0 +1,16 @@
+<h2 class="dialog-title">Create Board</h2>
+
+<form (ngSubmit)="submit()" [formGroup]="form" class="dialog-form">
+  <mat-form-field appearance="outline" style="width:100%">
+    <mat-label>Board Name</mat-label>
+    <input matInput formControlName="name" placeholder="Enter board name" />
+    <mat-error *ngIf="form.get('name')?.invalid && form.get('name')?.touched">
+      Board name is required
+    </mat-error>
+  </mat-form-field>
+
+  <div class="actions">
+    <button mat-button type="button" (click)="cancel()">Cancel</button>
+    <button mat-flat-button color="primary" type="submit">Create</button>
+  </div>
+</form>

@@ -21,6 +21,13 @@ export const routes: Routes = [
         .then(m => m.DashboardComponent)
   },
   {
+    path: 'boards',
+    loadComponent: () =>
+      import('./features/boards/boards.component').then(
+        m => m.BoardsComponent
+      )
+  },
+  {
     path: 'register',
     loadComponent: () =>
       import('./features/auth/register/register.component')

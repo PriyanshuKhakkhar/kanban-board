@@ -1,0 +1,8 @@
+<div class="boards-page container">
+  <h1>Boards</h1>
+  <div class="boards-list">
+    <div *ngFor="let b of (boards$ | async)" class="board-row" (click)="openBoard(b)">
+      {{ b.name }}
+    </div>
+  </div>
+</div>

@@ -15,6 +15,18 @@
     border-right: 1px solid #ececec;
 }
 
+.sidebar-nav { padding: 16px; display:flex; flex-direction:column; gap:8px; }
+.sidebar-nav .nav-item { display:block; padding:8px 12px; border-radius:8px; color:#0f1724; text-decoration:none; font-weight:600; }
+.sidebar-nav .nav-item:hover { background: rgba(15,23,36,0.04); }
+.sidebar-nav .nav-item.active { background: linear-gradient(90deg,#0052CC,#7C3AED); color:#fff; }
+.sidebar-section { margin-top:12px; padding-top:12px; border-top:1px solid #f1f1f1; }
+.section-title { font-size:12px; font-weight:700; color:#6b7280; margin-bottom:8px; }
+.boards-list { display:flex; flex-direction:column; gap:6px; }
+.board-item { padding:8px 10px; border-radius:8px; font-size:14px; color:#374151; background:transparent; }
+.board-item:hover { background: rgba(15,23,36,0.03); cursor:pointer; }
+.board-item.active { background: linear-gradient(90deg,#0052CC,#7C3AED); color:#fff; }
+.create-board-btn { margin-top:10px; display:inline-block; padding:8px 12px; border-radius:8px; background:transparent; border:1px dashed rgba(15,23,36,0.06); color:#2563EB; cursor:pointer; }
+
 .dashboard-main {
     flex: 1;
     padding: 24px;
