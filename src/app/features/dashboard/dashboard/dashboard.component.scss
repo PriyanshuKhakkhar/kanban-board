@@ -63,6 +63,13 @@
 .count { background: rgba(15,23,36,0.06); padding:4px 8px; border-radius:12px; font-size:13px; color:#0f1724; }
 .add-card { background: transparent; border: none; color:#2563EB; font-weight:600; text-align:left; padding:0; cursor:pointer; }
 
+.add-input { display:flex; flex-direction:column; gap:8px; }
+.add-input input { padding:10px 12px; border-radius:8px; border:1px solid #e6e6e6; outline:none; }
+.add-input input:focus { box-shadow: 0 6px 18px rgba(16,24,40,0.06); border-color: #c7b8ff; }
+.add-actions { display:flex; gap:8px; }
+.add-actions .primary { background: linear-gradient(90deg,#0052CC,#7C3AED); color:#fff; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; }
+.add-actions .muted { background:transparent; border:none; color:#6b7280; cursor:pointer; }
+
 .card { background: #fff; border-radius: 12px; padding:12px 14px; box-shadow: 0 6px 18px rgba(15,23,42,0.06); transition: transform .12s ease, box-shadow .12s ease; border-left: 6px solid transparent; }
 .card:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(15,23,42,0.08); }
 .card-title { font-weight:700; color:#0f1724; margin-bottom:6px; }

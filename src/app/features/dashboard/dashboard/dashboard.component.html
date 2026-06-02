@@ -14,38 +14,37 @@
           <div class="column-header">
             <div class="title-row">
               <h3>To Do</h3>
-              <span class="count">3</span>
+              <span class="count">{{ todoTasks.length }}</span>
             </div>
-            <button class="add-card">+ Add card</button>
+            <button class="add-card" (click)="toggleAdd('todo')">
+              + Add card
+            </button>
           </div>
 
-          <div class="card">
-            <div class="card-title">Design login mockups</div>
-            <div class="card-desc">
-              Create high-fidelity login page variations.
-            </div>
-            <div class="card-meta">
-              <span class="badge priority">P2</span
-              ><span class="date">May 20</span>
+          <div *ngIf="showAddInput.todo" class="add-input">
+            <input
+              #todoInput
+              type="text"
+              placeholder="Enter task title"
+              (keyup.enter)="
+                createTask('todo', todoInput.value); todoInput.value = ''
+              "
+            />
+            <div class="add-actions">
+              <button
+                class="primary"
+                (click)="
+                  createTask('todo', todoInput.value); todoInput.value = ''
+                "
+              >
+                Add
+              </button>
+              <button class="muted" (click)="toggleAdd('todo')">Cancel</button>
             </div>
           </div>
 
-          <div class="card">
-            <div class="card-title">Set up routing</div>
-            <div class="card-desc">Add landing and auth routes to router.</div>
-            <div class="card-meta">
-              <span class="badge priority">P3</span
-              ><span class="date">May 18</span>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="card-title">Audit assets</div>
-            <div class="card-desc">Organize public images and icons.</div>
-            <div class="card-meta">
-              <span class="badge priority">P3</span
-              ><span class="date">May 17</span>
-            </div>
+          <div *ngFor="let task of todoTasks" class="card">
+            <div class="card-title">{{ task.title }}</div>
           </div>
         </div>
 
@@ -54,27 +53,41 @@
           <div class="column-header">
             <div class="title-row">
               <h3>In Progress</h3>
-              <span class="count">2</span>
+              <span class="count">{{ inprogressTasks.length }}</span>
             </div>
-            <button class="add-card">+ Add card</button>
+            <button class="add-card" (click)="toggleAdd('inprogress')">
+              + Add card
+            </button>
           </div>
 
-          <div class="card">
-            <div class="card-title">Implement dashboard layout</div>
-            <div class="card-desc">Replace placeholders with kanban grid.</div>
-            <div class="card-meta">
-              <span class="badge priority">P1</span
-              ><span class="date">May 27</span>
+          <div *ngIf="showAddInput.inprogress" class="add-input">
+            <input
+              #inprogInput
+              type="text"
+              placeholder="Enter task title"
+              (keyup.enter)="
+                createTask('inprogress', inprogInput.value);
+                inprogInput.value = ''
+              "
+            />
+            <div class="add-actions">
+              <button
+                class="primary"
+                (click)="
+                  createTask('inprogress', inprogInput.value);
+                  inprogInput.value = ''
+                "
+              >
+                Add
+              </button>
+              <button class="muted" (click)="toggleAdd('inprogress')">
+                Cancel
+              </button>
             </div>
           </div>
 
-          <div class="card">
-            <div class="card-title">Polish login UI</div>
-            <div class="card-desc">Tighten spacing and add illustrations.</div>
-            <div class="card-meta">
-              <span class="badge priority">P2</span
-              ><span class="date">May 26</span>
-            </div>
+          <div *ngFor="let task of inprogressTasks" class="card">
+            <div class="card-title">{{ task.title }}</div>
           </div>
         </div>
 
@@ -83,18 +96,40 @@
           <div class="column-header">
             <div class="title-row">
               <h3>Review</h3>
-              <span class="count">1</span>
+              <span class="count">{{ reviewTasks.length }}</span>
             </div>
-            <button class="add-card">+ Add card</button>
+            <button class="add-card" (click)="toggleAdd('review')">
+              + Add card
+            </button>
           </div>
 
-          <div class="card">
-            <div class="card-title">Accessibility pass</div>
-            <div class="card-desc">Keyboard nav and aria labels.</div>
-            <div class="card-meta">
-              <span class="badge priority">P2</span
-              ><span class="date">May 25</span>
+          <div *ngIf="showAddInput.review" class="add-input">
+            <input
+              #reviewInput
+              type="text"
+              placeholder="Enter task title"
+              (keyup.enter)="
+                createTask('review', reviewInput.value); reviewInput.value = ''
+              "
+            />
+            <div class="add-actions">
+              <button
+                class="primary"
+                (click)="
+                  createTask('review', reviewInput.value);
+                  reviewInput.value = ''
+                "
+              >
+                Add
+              </button>
+              <button class="muted" (click)="toggleAdd('review')">
+                Cancel
+              </button>
             </div>
+          </div>
+
+          <div *ngFor="let task of reviewTasks" class="card">
+            <div class="card-title">{{ task.title }}</div>
           </div>
         </div>
 
@@ -103,27 +138,37 @@
           <div class="column-header">
             <div class="title-row">
               <h3>Done</h3>
-              <span class="count">2</span>
+              <span class="count">{{ doneTasks.length }}</span>
             </div>
-            <button class="add-card">+ Add card</button>
+            <button class="add-card" (click)="toggleAdd('done')">
+              + Add card
+            </button>
           </div>
 
-          <div class="card">
-            <div class="card-title">Initialize repo</div>
-            <div class="card-desc">Create project and initial commit.</div>
-            <div class="card-meta">
-              <span class="badge priority">P3</span
-              ><span class="date">May 10</span>
+          <div *ngIf="showAddInput.done" class="add-input">
+            <input
+              #doneInput
+              type="text"
+              placeholder="Enter task title"
+              (keyup.enter)="
+                createTask('done', doneInput.value); doneInput.value = ''
+              "
+            />
+            <div class="add-actions">
+              <button
+                class="primary"
+                (click)="
+                  createTask('done', doneInput.value); doneInput.value = ''
+                "
+              >
+                Add
+              </button>
+              <button class="muted" (click)="toggleAdd('done')">Cancel</button>
             </div>
           </div>
 
-          <div class="card">
-            <div class="card-title">Landing hero</div>
-            <div class="card-desc">Add hero section and CTA.</div>
-            <div class="card-meta">
-              <span class="badge priority">P3</span
-              ><span class="date">May 12</span>
-            </div>
+          <div *ngFor="let task of doneTasks" class="card">
+            <div class="card-title">{{ task.title }}</div>
           </div>
         </div>
       </div>
