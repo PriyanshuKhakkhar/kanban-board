@@ -1,18 +1,19 @@
 .topbar-search-section {
   width: 100%;
-  background: White;
+  background: var(--kb-header-bg);
+  backdrop-filter: blur(8px);
   height: 64px;
   display: flex;
   align-items: center;
   padding: 0 16px;
-  border-bottom: 1px solid #22272F;
+  border-bottom: 1px solid var(--kb-border);
 }
 
 .logo-area { display:flex; align-items:center; gap:10px; margin-right:12px; padding-left:8px; min-width:160px; }
 .app-logo-mark { height:44px; width:44px; display:block; vertical-align:middle; flex:0 0 44px; }
 .brand { display:flex; align-items:center; gap:6px; white-space:nowrap; }
-.brand-main { font-size:16px; font-weight:700; color:#0f1724; }
-.brand-accent { font-size:16px; font-weight:700; color:#06b6d4; }
+.brand-main { font-size:16px; font-weight:700; color:var(--kb-text); }
+.brand-accent { font-size:16px; font-weight:700; color:var(--kb-cyan); }
 
 .search-group {
   display:flex;
@@ -26,11 +27,12 @@
 .nav-actions {
   display:flex;
   align-items:center;
-  gap:12px;
-  margin-left: auto; /* keep on the right */
+  gap:8px;
+  margin-left: auto;
 }
 
-.notif-btn { position: relative; color: #0f1724; }
+/* ── Notifications ──────────────────────────────────────────── */
+.notif-btn { position: relative; color: var(--kb-text); }
 .notif-btn mat-icon { font-size: 20px; }
 .notif-badge {
   position: absolute;
@@ -39,7 +41,7 @@
   min-width: 16px;
   height: 16px;
   padding: 0 4px;
-  background: #ef4444; /* red */
+  background: #ef4444;
   color: #fff;
   font-size: 11px;
   font-weight: 700;
@@ -49,6 +51,7 @@
   justify-content: center;
 }
 
+/* ── Profile avatar ─────────────────────────────────────────── */
 .profile-btn { padding: 0; min-width: auto; }
 .profile-avatar {
   width: 36px;
@@ -66,18 +69,19 @@
 }
 .profile-btn:hover .profile-avatar { transform: translateY(-2px); box-shadow: 0 18px 40px rgba(16,24,40,0.12); }
 
+/* ── Search box ─────────────────────────────────────────────── */
 .trello-search-box {
   width: 100%;
   height: 48px;
-  border: 1px solid #579dff;
+  border: 1px solid var(--kb-search-border);
   border-radius: 10px;
-  background: #ffffff;
-  box-shadow: 0 0 0 1px rgba(87, 157, 255, 0.22);
+  background: var(--kb-search-bg);
+  box-shadow: 0 0 0 1px rgba(87, 157, 255, 0.15);
   transition: all 0.2s ease;
 
   display: flex;
   align-items: center;
-  padding: 0 14px 0 44px; /* reserve space for search icon */
+  padding: 0 14px 0 44px;
   position: relative;
 }
 
@@ -86,7 +90,7 @@
   left: 14px;
   top: 50%;
   transform: translateY(-50%);
-  color: #9fadbc;
+  color: var(--kb-text-muted);
   font-size: 20px;
   pointer-events: none;
 }
@@ -95,25 +99,23 @@
   background: transparent;
   border: none;
   outline: none;
-  color: #172b4d;
+  color: var(--kb-search-text);
   font-size: 14px;
   width: 100%;
   height: 40px;
   padding-left: 4px;
   position: relative;
   z-index: 1;
+  caret-color: var(--kb-search-text);
 }
-.trello-search-input::placeholder { color: #6b778c; }
-
-/* Improve caret and autofill visibility without changing layout */
-.trello-search-input { caret-color: #172b4d; background: #ffffff; }
+.trello-search-input::placeholder { color: var(--kb-search-ph); }
 
 input.trello-search-input:-webkit-autofill,
 input.trello-search-input:-webkit-autofill:focus,
 input.trello-search-input:-webkit-autofill:hover {
-  -webkit-text-fill-color: #172b4d !important;
-  box-shadow: 0 0 0px 1000px #ffffff inset !important;
-  caret-color: #172b4d !important;
+  -webkit-text-fill-color: var(--kb-search-text) !important;
+  box-shadow: 0 0 0px 1000px var(--kb-search-bg) inset !important;
+  caret-color: var(--kb-search-text) !important;
 }
 
 .trello-search-box:hover,
@@ -122,6 +124,7 @@ input.trello-search-input:-webkit-autofill:hover {
   box-shadow: 0 0 0 2px rgba(56, 139, 255, 0.28);
 }
 
+/* ── Create button ──────────────────────────────────────────── */
 .trello-create-btn {
   height: 40px;
   min-width: 84px;
@@ -152,27 +155,4 @@ input.trello-search-input:-webkit-autofill:hover {
   .search-group { gap:8px; }
   .trello-create-btn { min-width: 68px; padding: 0 10px; }
   .app-logo-mark { height:36px; width:36px; }
-}
-
-
-.left-section,
-.right-section {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.logo {
-  font-size: 20px;
-  font-weight: 700;
-  color: #1e293b;
-}
-
-::ng-deep .mat-mdc-slide-toggle {
-  margin-top: 3px;
-}
-
-body.dark-theme {
-  background: #0f172a;
-  color: white;
 }

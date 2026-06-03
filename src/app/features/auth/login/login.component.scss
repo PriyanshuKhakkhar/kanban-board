@@ -2,8 +2,10 @@
 .auth-page {
     position: relative;
     min-height: 100vh;
-    background: #F4F5F7;
-    background-image: radial-gradient(circle at 10% 10%, rgba(124,58,237,0.03), transparent 12%), radial-gradient(circle at 90% 90%, rgba(0,82,204,0.02), transparent 12%);
+    background: var(--kb-bg);
+    background-image:
+      radial-gradient(circle at 10% 10%, rgba(124,58,237,0.04), transparent 12%),
+      radial-gradient(circle at 90% 90%, rgba(0,82,204,0.03), transparent 12%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -45,14 +47,15 @@
     width: 430px;
     padding: 32px 40px 28px;
     border-radius: 24px;
-    background: rgba(255,255,255,0.96);
+    background: var(--kb-surface);
     backdrop-filter: blur(6px);
-    box-shadow: 0 20px 50px rgba(15,23,42,0.08);
+    box-shadow: 0 20px 50px var(--kb-shadow);
+    border: 1px solid var(--kb-border);
 }
 
 .card-header { display:flex; flex-direction:column; align-items:center; gap:10px; margin-bottom: 6px; }
 .logo-mark { width:48px; height:48px; display:flex; align-items:center; justify-content:center; border-radius:10px; font-weight:800; color:#fff; background: linear-gradient(135deg,#0052CC,#7C3AED); box-shadow: 0 8px 24px rgba(92, 63, 187, 0.12); }
-.card-title { margin:0; font-size:20px; color: #172B4D; font-weight:700; }
+.card-title { margin:0; font-size:20px; color: var(--kb-text); font-weight:700; }
 .login-title { margin-top: 14px; margin-bottom: 18px; }
 
 .login-form { display:flex; flex-direction:column; gap:8px; margin-top:4px; }
@@ -62,24 +65,37 @@
 
 .remember-row { display:flex; align-items:center; justify-content:space-between; margin: 8px 0 18px; }
 .remember-left { display:flex; align-items:center; gap:10px; }
-.forgot { color: var(--muted, #5E6C84); text-decoration:none; font-size:14px; }
+.forgot { color: var(--kb-text-muted); text-decoration:none; font-size:14px; }
 
 .primary-btn { margin-top:4px; height:48px; padding:0 16px; font-weight:700; border-radius:10px; background: linear-gradient(90deg,#0052CC,#7C3AED); color:#fff; box-shadow: 0 12px 36px rgba(5,82,204,0.12); }
 .primary-btn:hover { transform: translateY(-2px); }
 
-.divider-text { margin: 14px 0 10px; color: var(--muted,#9AA6B2); font-size:13px; display:flex; align-items:center; justify-content:center; }
-.divider-text span { background: rgba(255,255,255,0.96); padding: 0 10px; }
+.divider-text { margin: 14px 0 10px; color: var(--kb-text-muted); font-size:13px; display:flex; align-items:center; justify-content:center; }
+.divider-text span { background: var(--kb-surface); padding: 0 10px; }
 
 .social-grid { display:grid; grid-template-columns: 1fr; gap:12px; margin-top:8px; }
 .social-grid-centered { display:flex; justify-content:center; }
-.social-btn { display:flex; align-items:center; gap:12px; padding:12px 14px; border-radius:10px; background:#fff; border:1px solid rgba(16,24,40,0.06); box-shadow: none; justify-content:flex-start; cursor:pointer; transition: box-shadow .18s ease, transform .12s ease; font-weight:600; width:100%; }
+.social-btn {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:12px 14px;
+  border-radius:10px;
+  background: var(--kb-surface-2);
+  border:1px solid var(--kb-border);
+  box-shadow: none;
+  justify-content:flex-start;
+  cursor:pointer;
+  transition: box-shadow .18s ease, transform .12s ease;
+  font-weight:600;
+  width:100%;
+}
 .social-btn svg { display:block; margin-left:8px; }
-.social-btn:hover { transform: translateY(-3px); box-shadow: 0 12px 36px rgba(16,24,40,0.06); }
-
-.social-btn span { color: #172B4D; margin-left:6px; }
+.social-btn:hover { transform: translateY(-3px); box-shadow: 0 12px 36px var(--kb-shadow); }
+.social-btn span { color: var(--kb-text); margin-left:6px; }
 
 .footer-row { display:flex; justify-content:center; margin-top:6px; }
-.create { color: var(--primary,#0052CC); text-decoration:none; font-weight:600; }
+.create { color: #0052CC; text-decoration:none; font-weight:600; }
 .create-account { margin-top: 18px; margin-bottom: 0; }
 
 .decor { position:absolute; width:220px; height:220px; border-radius:50%; filter: blur(28px); opacity:0.28; z-index:0; }
@@ -103,4 +119,3 @@
     .auth-illustration { display: none; }
     .login-card { width: calc(100% - 32px); }
 }
-

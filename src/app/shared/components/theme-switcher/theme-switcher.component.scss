@@ -1,0 +1,95 @@
+/* ── Theme toggle button ────────────────────────────────────── */
+.theme-btn {
+  color: var(--kb-text-muted);
+  transition: color 0.15s ease;
+}
+.theme-btn:hover {
+  color: var(--kb-text);
+}
+
+/* ── Theme menu styles (global, via ::ng-deep) ──────────────── */
+::ng-deep .theme-menu-panel {
+  border-radius: 10px !important;
+  padding: 6px !important;
+  min-width: 148px !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08) !important;
+  border: 1px solid var(--kb-border) !important;
+
+  .theme-menu-header {
+    padding: 8px 12px 6px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--kb-text-subtle);
+    pointer-events: none;
+  }
+
+  .mat-mdc-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 12px;
+    min-height: 38px;
+    height: 38px;
+    border-radius: 6px;
+    margin: 2px 0;
+    transition: background-color 0.15s ease, color 0.15s ease;
+
+    mat-icon:first-child {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      margin-right: 0;
+      color: var(--kb-text-muted);
+    }
+
+    span {
+      flex: 1;
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--kb-text);
+    }
+
+    /* Hover effect for non-active options */
+    &:hover:not(.active) {
+      background-color: var(--kb-surface-2) !important;
+    }
+
+    /* Active (currently selected) item styling */
+    &.active {
+      background-color: rgba(0, 82, 204, 0.08) !important; /* Light blue / primary-tinted */
+      color: #0052CC !important;
+
+      span {
+        font-weight: 600; /* Slightly bolder text */
+        color: #0052CC !important;
+      }
+
+      mat-icon {
+        color: #0052CC !important;
+      }
+    }
+  }
+}
+
+/* Dark mode active item styling */
+html.dark ::ng-deep .theme-menu-panel {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+
+  .mat-mdc-menu-item {
+    &.active {
+      background-color: rgba(56, 139, 255, 0.15) !important; /* Light blue / primary-tinted in dark mode */
+      color: #58a6ff !important;
+
+      span {
+        color: #58a6ff !important;
+      }
+
+      mat-icon {
+        color: #58a6ff !important;
+      }
+    }
+  }
+}
+
