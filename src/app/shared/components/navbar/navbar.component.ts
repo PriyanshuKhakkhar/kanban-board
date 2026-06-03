@@ -7,6 +7,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { CreateBoardDialogComponent } from '../create-board-dialog/create-board-dialog.component';
 import { BoardService } from '../../../core/services/board.service';
+import { AuthService } from '../../../features/auth/auth.service';
 
 @Component({
   selector: 'app-navbar',
@@ -21,15 +22,14 @@ export class NavbarComponent {
   userInitials = 'PK';
 
   onLogout() {
-    // placeholder logout action
-    console.log('logout clicked');
+    this.authService.logout();
   }
 
   onLogoError() {
     this.useImageLogo = false;
   }
 
-  constructor(private dialog: MatDialog, private boardService: BoardService) {}
+  constructor(private dialog: MatDialog, private boardService: BoardService, private authService: AuthService) {}
 
   openCreateDialog() {
     const ref = this.dialog.open(CreateBoardDialogComponent, { width: '420px' });

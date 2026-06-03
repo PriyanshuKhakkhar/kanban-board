@@ -6,6 +6,8 @@ import { BoardService, Board } from '../../../core/services/board.service';
 import { Observable } from 'rxjs';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { CreateBoardDialogComponent } from '../../../shared/components/create-board-dialog/create-board-dialog.component';
+import { TaskDialogComponent, TaskDialogData } from '../../../shared/components/task-dialog/task-dialog.component';
+import { ConfirmDialogComponent, ConfirmDialogData } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
@@ -40,20 +42,30 @@ export class DashboardComponent {
 
   openBoardDetails(b: Board | null) {
     if (!b) return;
-    // simple details panel: keep implementation minimal for now
-    alert(`Board: ${b.name}\nCreated: ${b.createdAt}`);
+    // Board details shown via the existing board header — no browser alert needed
+    console.log('Board details:', b);
   }
 
   renameBoard(b: Board | null) {
     if (!b) return;
-    const name = prompt('Rename board', b.name);
-    if (!name) return;
-    const boards = (this.boards$ as any); // not changing service shape here; keep simple
-    // naive approach: update via internal boards array
-    const current = this.boardService.boards;
-    const updated = current.map(x => x.id === b.id ? { ...x, name } : x);
-    (this.boardService as any).boardsSubject.next(updated);
-    this.boardService.setActive(b.id);
+    const data: TaskDialogData = {
+      title: 'Rename Board',
+      label: 'Board name',
+      value: b.name,
+      placeholder: 'Enter board name'
+    };
+    const ref = this.dialog.open(TaskDialogComponent, {
+      width: '400px',
+      panelClass: 'kb-dialog-panel',
+      data
+    });
+    ref.afterClosed().subscribe((name: string | null) => {
+      if (!name) return;
+      const current = this.boardService.boards;
+      const updated = current.map(x => x.id === b.id ? { ...x, name } : x);
+      (this.boardService as any).boardsSubject.next(updated);
+      this.boardService.setActive(b.id);
+    });
   }
 
   duplicateBoard(b: Board | null) {
@@ -63,8 +75,20 @@ export class DashboardComponent {
 
   deleteBoard(b: Board | null) {
     if (!b) return;
-    if (!confirm(`Delete board "${b.name}"? This cannot be undone.`)) return;
-    this.boardService.deleteBoard(b.id);
+    const data: ConfirmDialogData = {
+      title: 'Delete Board',
+      message: `Delete board "${b.name}"? This cannot be undone.`,
+      confirmLabel: 'Delete',
+      danger: true
+    };
+    const ref = this.dialog.open(ConfirmDialogComponent, {
+      width: '400px',
+      panelClass: 'kb-dialog-panel',
+      data
+    });
+    ref.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) this.boardService.deleteBoard(b.id);
+    });
   }
 
   setActive(b: Board) {
@@ -89,18 +113,39 @@ export class DashboardComponent {
   
   editTask(column: 'todo' | 'inprogress' | 'review' | 'done', index: number, task: { title: string }) {
     if (!this.currentBoard) return;
-    const newTitle = prompt('Edit task title', task.title);
-    if (newTitle === null) return; // cancelled
-    const trimmed = newTitle.trim();
-    if (!trimmed) return;
-    this.boardService.updateTask(this.currentBoard.id, column, index, trimmed);
+    const data: TaskDialogData = {
+      title: 'Edit Task',
+      label: 'Task title',
+      value: task.title,
+      placeholder: 'Enter task title'
+    };
+    const ref = this.dialog.open(TaskDialogComponent, {
+      width: '400px',
+      panelClass: 'kb-dialog-panel',
+      data
+    });
+    ref.afterClosed().subscribe((newTitle: string | null) => {
+      if (!newTitle) return;
+      this.boardService.updateTask(this.currentBoard!.id, column, index, newTitle);
+    });
   }
 
   deleteTask(column: 'todo' | 'inprogress' | 'review' | 'done', index: number, task: { title: string }) {
     if (!this.currentBoard) return;
-    const ok = confirm(`Delete task "${task.title}"?`);
-    if (!ok) return;
-    this.boardService.deleteTask(this.currentBoard.id, column, index);
+    const data: ConfirmDialogData = {
+      title: 'Delete Task',
+      message: `Delete task "${task.title}"?`,
+      confirmLabel: 'Delete',
+      danger: true
+    };
+    const ref = this.dialog.open(ConfirmDialogComponent, {
+      width: '400px',
+      panelClass: 'kb-dialog-panel',
+      data
+    });
+    ref.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) this.boardService.deleteTask(this.currentBoard!.id, column, index);
+    });
   }
   addCard(column: string): void {
       console.log(`Add card to ${column} column`);

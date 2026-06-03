@@ -37,6 +37,7 @@
         <div *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" class="error-message">
           <div *ngIf="registerForm.get('email')?.errors?.['required']">Email is required.</div>
           <div *ngIf="registerForm.get('email')?.errors?.['email']">Enter a valid email.</div>
+          <div *ngIf="registerForm.get('email')?.errors?.['emailTaken']">This email is already registered. Please log in.</div>
         </div>
 
         <div class="input-field" [class.invalid]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">

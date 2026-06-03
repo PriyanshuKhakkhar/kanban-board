@@ -39,7 +39,10 @@ export class LoginComponent {
   onSubmit(): void {
     if (this.loginForm.valid) {
       const { usernameOrEmail, password } = this.loginForm.value;
-      // TODO: perform login
+      const success = this.authService.login(usernameOrEmail, password);
+      if (!success) {
+        this.loginForm.setErrors({ invalidCredentials: true });
+      }
     } else {
       this.loginForm.markAllAsTouched();
     }
@@ -47,9 +50,13 @@ export class LoginComponent {
 
   onLogin(): void {
     if (this.loginForm.valid) {
-      const { usernameOrEmail, password} = this.loginForm.value;
-      this.router.navigate(['/dashboard']);
-      // TODO: perform login
+      const { usernameOrEmail, password } = this.loginForm.value;
+      const success = this.authService.login(usernameOrEmail, password);
+      if (!success) {
+        this.loginForm.setErrors({ invalidCredentials: true });
+      }
+    } else {
+      this.loginForm.markAllAsTouched();
     }
   }
   onLoginWithGoogle(): void {

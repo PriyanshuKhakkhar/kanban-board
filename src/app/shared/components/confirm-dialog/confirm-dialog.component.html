@@ -1,0 +1,33 @@
+<div class="kb-backdrop" (click)="cancel()"></div>
+
+<div class="kb-modal" role="alertdialog" [attr.aria-label]="data.title">
+  <!-- Header -->
+  <div class="kb-modal-header">
+    <span class="kb-modal-title">{{ data.title }}</span>
+    <button class="kb-close-btn" (click)="cancel()" aria-label="Close">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="close-icon">
+        <path d="M18 6 6 18M6 6l12 12"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Body -->
+  <div class="kb-modal-body">
+    <p class="kb-message">{{ data.message }}</p>
+  </div>
+
+  <!-- Footer -->
+  <div class="kb-modal-footer">
+    <button class="kb-btn kb-btn-cancel" (click)="cancel()">
+      {{ data.cancelLabel || 'Cancel' }}
+    </button>
+    <button
+      class="kb-btn"
+      [class.kb-btn-danger]="data.danger !== false"
+      [class.kb-btn-save]="data.danger === false"
+      (click)="confirm()"
+    >
+      {{ data.confirmLabel || 'Delete' }}
+    </button>
+  </div>
+</div>

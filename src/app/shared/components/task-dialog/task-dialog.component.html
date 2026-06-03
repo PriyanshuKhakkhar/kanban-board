@@ -1,0 +1,33 @@
+<div class="kb-backdrop" (click)="cancel()"></div>
+
+<div class="kb-modal" role="dialog" [attr.aria-label]="data.title">
+  <!-- Header -->
+  <div class="kb-modal-header">
+    <span class="kb-modal-title">{{ data.title }}</span>
+    <button class="kb-close-btn" (click)="cancel()" aria-label="Close dialog">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="close-icon">
+        <path d="M18 6 6 18M6 6l12 12"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Body -->
+  <div class="kb-modal-body">
+    <label class="kb-label" for="kb-dialog-input">{{ data.label }}</label>
+    <input
+      id="kb-dialog-input"
+      class="kb-input"
+      type="text"
+      [placeholder]="data.placeholder || 'Enter value...'"
+      [(ngModel)]="inputValue"
+      (keydown)="onKeydown($event)"
+      autofocus
+    />
+  </div>
+
+  <!-- Footer -->
+  <div class="kb-modal-footer">
+    <button class="kb-btn kb-btn-cancel" (click)="cancel()">Cancel</button>
+    <button class="kb-btn kb-btn-save" (click)="save()" [disabled]="!inputValue.trim()">Save</button>
+  </div>
+</div>

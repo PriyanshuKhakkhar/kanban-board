@@ -13,3 +13,19 @@ html, body {
 
 *, *::before, *::after { box-sizing: border-box; }
 
+/* ── Kanban custom dialog panel ────────────────────────────────────────────
+   Strips Material's default container so our custom backdrop + modal
+   positioning takes full control. The mat-dialog-container becomes
+   invisible; our .kb-backdrop and .kb-modal do all the visual work.
+──────────────────────────────────────────────────────────────────────────── */
+.kb-dialog-panel .mat-mdc-dialog-surface,
+.kb-dialog-panel .mat-dialog-container {
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  overflow: visible !important;
+}
+
+.kb-dialog-panel {
+  background: transparent !important;
+}
