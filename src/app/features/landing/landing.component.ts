@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -31,6 +31,12 @@ import { ThemeSwitcherComponent } from '../../shared/components/theme-switcher/t
 })
 export class LandingComponent {
   heroForm!: FormGroup;
+  isScrolled = false;
+
+  @HostListener('window:scroll', [])
+  onWindowScroll() {
+    this.isScrolled = window.scrollY > 20;
+  }
 
   constructor(private fb: FormBuilder, private router: Router) {
     this.heroForm = this.fb.group({
@@ -48,8 +54,8 @@ export class LandingComponent {
 
   start() {
     if (this.heroForm.valid) {
-      // Integrate signup flow or navigation here
-      console.log('Start for free:', this.heroForm.value.email);
+      // Redirect email to signup route
+      this.router.navigate(['/register'], { queryParams: { email: this.heroForm.value.email } });
     } else {
       this.heroForm.markAllAsTouched();
     }
