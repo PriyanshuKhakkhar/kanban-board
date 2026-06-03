@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { AuthService } from '../../features/auth/auth.service';
 
 export interface Task { title: string }
 
@@ -24,9 +25,74 @@ export class BoardService {
   private activeSubject = new BehaviorSubject<Board | null>(null);
   active$ = this.activeSubject.asObservable();
 
+  constructor(private authService: AuthService) {
+    // Load persisted boards for the currently logged-in user on startup
+    this.loadBoards();
+  }
+
   get boards() {
     return this.boardsSubject.getValue();
   }
+
+  // ── LocalStorage Keys ────────────────────────────────────────────────────────
+
+  private getBoardsKey(): string {
+    const email = this.authService.getCurrentUserEmail() ?? 'guest';
+    return `boards_${email}`;
+  }
+
+  // ── Persistence ──────────────────────────────────────────────────────────────
+
+  /** Persists the current boards array to localStorage under a user-specific key. */
+  saveBoards(): void {
+    const key = this.getBoardsKey();
+    localStorage.setItem(key, JSON.stringify(this.boards));
+  }
+
+  /**
+   * Loads boards from localStorage for the current user and pushes them into
+   * the reactive stream. If the active board was set before, it is restored too.
+   */
+  loadBoards(): void {
+    const key = this.getBoardsKey();
+    const raw = localStorage.getItem(key);
+    if (!raw) {
+      this.boardsSubject.next([]);
+      this.activeSubject.next(null);
+      return;
+    }
+    try {
+      const boards = JSON.parse(raw) as Board[];
+      this.boardsSubject.next(boards);
+      // Restore active board (first board by default if previously active is gone)
+      const active = this.activeSubject.getValue();
+      if (active) {
+        const found = boards.find(b => b.id === active.id) ?? (boards.length ? boards[0] : null);
+        this.activeSubject.next(found);
+      } else if (boards.length) {
+        this.activeSubject.next(boards[0]);
+      }
+    } catch {
+      this.boardsSubject.next([]);
+      this.activeSubject.next(null);
+    }
+  }
+
+  // ── Tasks ────────────────────────────────────────────────────────────────────
+
+  /**
+   * Alias kept for API symmetry. Tasks are stored inline within boards,
+   * so saveTasks / loadTasks delegate to saveBoards / loadBoards.
+   */
+  saveTasks(): void {
+    this.saveBoards();
+  }
+
+  loadTasks(): void {
+    this.loadBoards();
+  }
+
+  // ── Board Mutations ──────────────────────────────────────────────────────────
 
   addBoard(board: Board) {
     const b: Board = {
@@ -43,6 +109,7 @@ export class BoardService {
     this.boardsSubject.next(next);
     // set newly created board as active
     this.activeSubject.next(b);
+    this.saveBoards();
   }
 
   toggleFavorite(boardId: number) {
@@ -52,6 +119,17 @@ export class BoardService {
     if (active && active.id === boardId) {
       this.activeSubject.next(boards.find(x => x.id === boardId) || null);
     }
+    this.saveBoards();
+  }
+
+  renameBoard(boardId: number, name: string) {
+    const boards = this.boards.map(b => b.id === boardId ? { ...b, name } : b);
+    this.boardsSubject.next(boards);
+    const active = this.activeSubject.getValue();
+    if (active && active.id === boardId) {
+      this.activeSubject.next(boards.find(x => x.id === boardId) || null);
+    }
+    this.saveBoards();
   }
 
   deleteBoard(boardId: number) {
@@ -61,6 +139,7 @@ export class BoardService {
     if (active && active.id === boardId) {
       this.activeSubject.next(boards.length ? boards[0] : null);
     }
+    this.saveBoards();
   }
 
   duplicateBoard(boardId: number) {
@@ -73,12 +152,15 @@ export class BoardService {
       createdAt: new Date().toISOString(),
     };
     this.boardsSubject.next([...this.boards, copy]);
+    this.saveBoards();
   }
 
   setActive(boardId: number) {
     const found = this.boards.find(b => b.id === boardId) || null;
     this.activeSubject.next(found);
   }
+
+  // ── Task Mutations ────────────────────────────────────────────────────────────
 
   addTask(boardId: number, column: keyof NonNullable<Board['columns']>, title: string) {
     const boards = this.boards.map(b => {
@@ -97,6 +179,7 @@ export class BoardService {
       const updated = boards.find(x => x.id === boardId) || null;
       this.activeSubject.next(updated);
     }
+    this.saveBoards();
   }
 
   updateTask(boardId: number, column: keyof NonNullable<Board['columns']>, index: number, title: string) {
@@ -115,6 +198,7 @@ export class BoardService {
     if (active && active.id === boardId) {
       this.activeSubject.next(boards.find(x => x.id === boardId) || null);
     }
+    this.saveBoards();
   }
 
   deleteTask(boardId: number, column: keyof NonNullable<Board['columns']>, index: number) {
@@ -133,6 +217,7 @@ export class BoardService {
     if (active && active.id === boardId) {
       this.activeSubject.next(boards.find(x => x.id === boardId) || null);
     }
+    this.saveBoards();
   }
 
   moveTask(
@@ -165,5 +250,6 @@ export class BoardService {
     if (active && active.id === boardId) {
       this.activeSubject.next(boards.find(x => x.id === boardId) || null);
     }
+    this.saveBoards();
   }
 }

@@ -61,9 +61,7 @@ export class DashboardComponent {
     });
     ref.afterClosed().subscribe((name: string | null) => {
       if (!name) return;
-      const current = this.boardService.boards;
-      const updated = current.map(x => x.id === b.id ? { ...x, name } : x);
-      (this.boardService as any).boardsSubject.next(updated);
+      this.boardService.renameBoard(b.id, name);
       this.boardService.setActive(b.id);
     });
   }
@@ -108,6 +106,8 @@ export class DashboardComponent {
   // keep local reference for convenience when adding tasks
   private currentBoard: Board | null = null;
   ngOnInit(): void {
+    // Reload boards for the current user (important after login)
+    this.boardService.loadBoards();
     this.boardService.active$.subscribe(b => (this.currentBoard = b));
   }
   

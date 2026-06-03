@@ -54,6 +54,7 @@ export class AuthService {
     // Check hardcoded admin account
     if (email === 'admin@gmail.com' && password === '123456') {
       localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('currentUserEmail', 'admin@gmail.com');
       this.router.navigate(['/dashboard']);
       return true;
     }
@@ -66,6 +67,7 @@ export class AuthService {
 
     if (match) {
       localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('currentUserEmail', match.email.toLowerCase());
       this.router.navigate(['/dashboard']);
       return true;
     }
@@ -76,7 +78,9 @@ export class AuthService {
   // ── Logout ──────────────────────────────────────────────────────────────────
 
   logout(): void {
+    // Remove authentication state only — boards and tasks are preserved
     localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('currentUserEmail');
     this.router.navigate(['/login']);
   }
 
@@ -84,5 +88,12 @@ export class AuthService {
 
   isAuthenticated(): boolean {
     return localStorage.getItem('isLoggedIn') === 'true';
+  }
+
+  // ── Current User ─────────────────────────────────────────────────────────────
+
+  /** Returns the email of the currently logged-in user, or null if not logged in. */
+  getCurrentUserEmail(): string | null {
+    return localStorage.getItem('currentUserEmail');
   }
 }
