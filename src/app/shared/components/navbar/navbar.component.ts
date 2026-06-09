@@ -27,7 +27,7 @@ import { ThemeSwitcherComponent } from '../theme-switcher/theme-switcher.compone
 })
 export class NavbarComponent {
   useImageLogo = true;
-  notificationsCount = 3;
+  notificationsCount = 0;
   userInitials = 'PK';
 
   onLogout() {

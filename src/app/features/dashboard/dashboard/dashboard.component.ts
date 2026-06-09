@@ -231,7 +231,10 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
     // Reload boards for the current user (important after login)
     this.boardService.loadBoards();
-    this.boardService.active$.subscribe(b => (this.currentBoard = b));
+    this.boardService.active$.subscribe(b => {
+      this.currentBoard = b;
+      this.updateFilteredTasks();
+    });
 
     // Load API tasks on init
     this.loadApiTasks();
@@ -313,7 +316,8 @@ export class DashboardComponent implements OnInit {
         title: newTask.title,
         priority: newTask.priority || 'MEDIUM',
         dueDate: newTask.dueDate,
-        status: this.getStatusFromColumnId(column)
+        status: this.getStatusFromColumnId(column),
+        boardId: this.currentBoard?.id
       };
 
       this.taskService.createTask(apiTask).subscribe({
@@ -351,7 +355,8 @@ export class DashboardComponent implements OnInit {
       title: text,
       priority: 'MEDIUM',
       dueDate: new Date(),
-      status: this.getStatusFromColumnId(column)
+      status: this.getStatusFromColumnId(column),
+      boardId: this.currentBoard?.id
     };
 
     this.taskService.createTask(apiTask).subscribe({
@@ -406,10 +411,13 @@ export class DashboardComponent implements OnInit {
   }
 
   updateFilteredTasks() {
-    this.todoTasks = this.tasks.filter(t => t.status === 'Todo');
-    this.inprogressTasks = this.tasks.filter(t => t.status === 'In Progress');
-    this.reviewTasks = this.tasks.filter(t => t.status === 'Review');
-    this.doneTasks = this.tasks.filter(t => t.status === 'Done');
+    const activeBoardId = this.currentBoard?.id;
+    const boardTasks = this.tasks.filter(t => !t.boardId || t.boardId === activeBoardId);
+
+    this.todoTasks = boardTasks.filter(t => t.status === 'Todo');
+    this.inprogressTasks = boardTasks.filter(t => t.status === 'In Progress');
+    this.reviewTasks = boardTasks.filter(t => t.status === 'Review');
+    this.doneTasks = boardTasks.filter(t => t.status === 'Done');
 
     const filter = this.activeFilter;
     this.filteredTodoTasks = this.filterColumnTasks(this.todoTasks, 'todo', filter);
