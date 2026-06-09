@@ -1,0 +1,68 @@
+<div class="kb-backdrop" (click)="cancel()"></div>
+
+<div class="kb-modal" role="dialog" [attr.aria-label]="title">
+  <!-- Header -->
+  <div class="kb-modal-header">
+    <span class="kb-modal-title">{{ title }}</span>
+    <button class="kb-close-btn" (click)="cancel()" aria-label="Close dialog">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="close-icon">
+        <path d="M18 6 6 18M6 6l12 12"/>
+      </svg>
+    </button>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" class="kb-modal-form">
+    <!-- Body -->
+    <div class="kb-modal-body">
+      <!-- Task Title -->
+      <div class="form-group">
+        <label class="kb-label" for="task-title">Task Title</label>
+        <input
+          id="task-title"
+          class="kb-input"
+          type="text"
+          formControlName="title"
+          placeholder="Enter task title"
+          autofocus
+        />
+        <div class="error-msg" *ngIf="form.get('title')?.touched && form.get('title')?.errors?.['required']">
+          Title is required
+        </div>
+      </div>
+
+      <!-- Priority -->
+      <div class="form-group">
+        <label class="kb-label" for="task-priority">Priority</label>
+        <select id="task-priority" class="kb-input kb-select" formControlName="priority">
+          <option value="" disabled selected>Select priority</option>
+          <option value="HIGH">High Priority</option>
+          <option value="MEDIUM">Medium Priority</option>
+          <option value="LOW">Low Priority</option>
+        </select>
+        <div class="error-msg" *ngIf="form.get('priority')?.touched && form.get('priority')?.errors?.['required']">
+          Priority is required
+        </div>
+      </div>
+
+      <!-- Due Date -->
+      <div class="form-group">
+        <label class="kb-label" for="task-due-date">Due Date</label>
+        <input
+          id="task-due-date"
+          class="kb-input"
+          type="date"
+          formControlName="dueDate"
+        />
+        <div class="error-msg" *ngIf="form.get('dueDate')?.touched && form.get('dueDate')?.errors?.['required']">
+          Due Date is required
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="kb-modal-footer">
+      <button type="button" class="kb-btn kb-btn-cancel" (click)="cancel()">Cancel</button>
+      <button type="submit" class="kb-btn kb-btn-save" [disabled]="form.invalid">{{ submitLabel }}</button>
+    </div>
+  </form>
+</div>

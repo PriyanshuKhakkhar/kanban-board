@@ -62,7 +62,7 @@
             class="action-btn"
           >
             <mat-icon>filter_list</mat-icon>
-            <span class="label">Filter</span>
+            <span class="label">{{ activeFilter ? 'Filter: ' + activeFilter : 'Filter' }}</span>
           </button>
 
           <button
@@ -81,6 +81,11 @@
       </div>
 
       <mat-menu #filterMenu="matMenu">
+        <button mat-menu-item *ngIf="activeFilter" (click)="applyFilter(null)">
+          <mat-icon>clear</mat-icon>
+          Clear Filter
+        </button>
+        <mat-divider *ngIf="activeFilter"></mat-divider>
         <button mat-menu-item (click)="applyFilter('Overdue')">Overdue</button>
         <button mat-menu-item (click)="applyFilter('Due Today')">
           Due Today
@@ -119,7 +124,7 @@
     <!-- Board container: 4 responsive columns -->
     <section class="board-wrapper">
       <div
-        *ngIf="active$ | async as active; else noBoard"
+        *ngIf="filteredBoard$ | async as active; else noBoard"
         class="board-container"
         cdkDropListGroup
       >
@@ -128,48 +133,35 @@
           <div class="column-header">
             <div class="title-row">
               <h3>To Do</h3>
-              <span class="count">{{ active.columns?.todo?.length || 0 }}</span>
+              <span class="count">{{ filteredTodoTasks.length }}</span>
             </div>
-            <button class="add-card" (click)="toggleAdd('todo')">
+            <button class="add-card" (click)="addCard('todo')">
               + Add card
             </button>
-          </div>
-
-          <div *ngIf="showAddInput.todo" class="add-input">
-            <input
-              #todoInput
-              type="text"
-              placeholder="Enter task title"
-              (keyup.enter)="
-                createTask('todo', todoInput.value); todoInput.value = ''
-              "
-            />
-            <div class="add-actions">
-              <button
-                class="primary"
-                (click)="
-                  createTask('todo', todoInput.value); todoInput.value = ''
-                "
-              >
-                Add
-              </button>
-              <button class="muted" (click)="toggleAdd('todo')">Cancel</button>
-            </div>
           </div>
 
           <div
             class="cards-list"
             cdkDropList
             id="todo"
-            [cdkDropListData]="active.columns?.todo || []"
+            [cdkDropListData]="filteredTodoTasks"
             (cdkDropListDropped)="drop($event)"
           >
             <div
-              *ngFor="let task of active.columns?.todo || []; let i = index"
+              *ngFor="let task of filteredTodoTasks; let i = index"
               class="card todo-card"
               cdkDrag
             >
               <div class="card-title">{{ task.title }}</div>
+              <div class="card-meta" *ngIf="task.priority || task.dueDate">
+                <span class="badge priority" *ngIf="task.priority" [ngClass]="getPriorityClass(task.priority)">
+                  {{ task.priority | titlecase }}
+                </span>
+                <span class="date" *ngIf="task.dueDate">
+                  <mat-icon style="font-size: 14px; width: 14px; height: 14px; vertical-align: middle; margin-right: 4px; display: inline-flex; align-items: center; justify-content: center;">calendar_today</mat-icon>
+                  {{ task.dueDate | date:'mediumDate' }}
+                </span>
+              </div>
               <div class="card-actions">
                 <button
                   class="action-btn edit"
@@ -212,57 +204,35 @@
           <div class="column-header">
             <div class="title-row">
               <h3>In Progress</h3>
-              <span class="count">{{
-                active.columns?.inprogress?.length || 0
-              }}</span>
+              <span class="count">{{ filteredInprogressTasks.length }}</span>
             </div>
-            <button class="add-card" (click)="toggleAdd('inprogress')">
+            <button class="add-card" (click)="addCard('inprogress')">
               + Add card
             </button>
-          </div>
-
-          <div *ngIf="showAddInput.inprogress" class="add-input">
-            <input
-              #inprogInput
-              type="text"
-              placeholder="Enter task title"
-              (keyup.enter)="
-                createTask('inprogress', inprogInput.value);
-                inprogInput.value = ''
-              "
-            />
-            <div class="add-actions">
-              <button
-                class="primary"
-                (click)="
-                  createTask('inprogress', inprogInput.value);
-                  inprogInput.value = ''
-                "
-              >
-                Add
-              </button>
-              <button class="muted" (click)="toggleAdd('inprogress')">
-                Cancel
-              </button>
-            </div>
           </div>
 
           <div
             class="cards-list"
             cdkDropList
             id="inprogress"
-            [cdkDropListData]="active.columns?.inprogress || []"
+            [cdkDropListData]="filteredInprogressTasks"
             (cdkDropListDropped)="drop($event)"
           >
             <div
-              *ngFor="
-                let task of active.columns?.inprogress || [];
-                let i = index
-              "
+              *ngFor="let task of filteredInprogressTasks; let i = index"
               class="card inprogress-card"
               cdkDrag
             >
               <div class="card-title">{{ task.title }}</div>
+              <div class="card-meta" *ngIf="task.priority || task.dueDate">
+                <span class="badge priority" *ngIf="task.priority" [ngClass]="getPriorityClass(task.priority)">
+                  {{ task.priority | titlecase }}
+                </span>
+                <span class="date" *ngIf="task.dueDate">
+                  <mat-icon style="font-size: 14px; width: 14px; height: 14px; vertical-align: middle; margin-right: 4px; display: inline-flex; align-items: center; justify-content: center;">calendar_today</mat-icon>
+                  {{ task.dueDate | date:'mediumDate' }}
+                </span>
+              </div>
               <div class="card-actions">
                 <button
                   class="action-btn edit"
@@ -305,53 +275,35 @@
           <div class="column-header">
             <div class="title-row">
               <h3>Review</h3>
-              <span class="count">{{
-                active.columns?.review?.length || 0
-              }}</span>
+              <span class="count">{{ filteredReviewTasks.length }}</span>
             </div>
-            <button class="add-card" (click)="toggleAdd('review')">
+            <button class="add-card" (click)="addCard('review')">
               + Add card
             </button>
-          </div>
-
-          <div *ngIf="showAddInput.review" class="add-input">
-            <input
-              #reviewInput
-              type="text"
-              placeholder="Enter task title"
-              (keyup.enter)="
-                createTask('review', reviewInput.value); reviewInput.value = ''
-              "
-            />
-            <div class="add-actions">
-              <button
-                class="primary"
-                (click)="
-                  createTask('review', reviewInput.value);
-                  reviewInput.value = ''
-                "
-              >
-                Add
-              </button>
-              <button class="muted" (click)="toggleAdd('review')">
-                Cancel
-              </button>
-            </div>
           </div>
 
           <div
             class="cards-list"
             cdkDropList
             id="review"
-            [cdkDropListData]="active.columns?.review || []"
+            [cdkDropListData]="filteredReviewTasks"
             (cdkDropListDropped)="drop($event)"
           >
             <div
-              *ngFor="let task of active.columns?.review || []; let i = index"
+              *ngFor="let task of filteredReviewTasks; let i = index"
               class="card review-card"
               cdkDrag
             >
               <div class="card-title">{{ task.title }}</div>
+              <div class="card-meta" *ngIf="task.priority || task.dueDate">
+                <span class="badge priority" *ngIf="task.priority" [ngClass]="getPriorityClass(task.priority)">
+                  {{ task.priority | titlecase }}
+                </span>
+                <span class="date" *ngIf="task.dueDate">
+                  <mat-icon style="font-size: 14px; width: 14px; height: 14px; vertical-align: middle; margin-right: 4px; display: inline-flex; align-items: center; justify-content: center;">calendar_today</mat-icon>
+                  {{ task.dueDate | date:'mediumDate' }}
+                </span>
+              </div>
               <div class="card-actions">
                 <button
                   class="action-btn edit"
@@ -394,48 +346,35 @@
           <div class="column-header">
             <div class="title-row">
               <h3>Done</h3>
-              <span class="count">{{ active.columns?.done?.length || 0 }}</span>
+              <span class="count">{{ filteredDoneTasks.length }}</span>
             </div>
-            <button class="add-card" (click)="toggleAdd('done')">
+            <button class="add-card" (click)="addCard('done')">
               + Add card
             </button>
-          </div>
-
-          <div *ngIf="showAddInput.done" class="add-input">
-            <input
-              #doneInput
-              type="text"
-              placeholder="Enter task title"
-              (keyup.enter)="
-                createTask('done', doneInput.value); doneInput.value = ''
-              "
-            />
-            <div class="add-actions">
-              <button
-                class="primary"
-                (click)="
-                  createTask('done', doneInput.value); doneInput.value = ''
-                "
-              >
-                Add
-              </button>
-              <button class="muted" (click)="toggleAdd('done')">Cancel</button>
-            </div>
           </div>
 
           <div
             class="cards-list"
             cdkDropList
             id="done"
-            [cdkDropListData]="active.columns?.done || []"
+            [cdkDropListData]="filteredDoneTasks"
             (cdkDropListDropped)="drop($event)"
           >
             <div
-              *ngFor="let task of active.columns?.done || []; let i = index"
+              *ngFor="let task of filteredDoneTasks; let i = index"
               class="card done-card"
               cdkDrag
             >
               <div class="card-title">{{ task.title }}</div>
+              <div class="card-meta" *ngIf="task.priority || task.dueDate">
+                <span class="badge priority" *ngIf="task.priority" [ngClass]="getPriorityClass(task.priority)">
+                  {{ task.priority | titlecase }}
+                </span>
+                <span class="date" *ngIf="task.dueDate">
+                  <mat-icon style="font-size: 14px; width: 14px; height: 14px; vertical-align: middle; margin-right: 4px; display: inline-flex; align-items: center; justify-content: center;">calendar_today</mat-icon>
+                  {{ task.dueDate | date:'mediumDate' }}
+                </span>
+              </div>
               <div class="card-actions">
                 <button
                   class="action-btn edit"

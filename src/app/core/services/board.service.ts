@@ -3,7 +3,11 @@ import { BehaviorSubject } from 'rxjs';
 import { moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { AuthService } from '../../features/auth/auth.service';
 
-export interface Task { title: string }
+export interface Task {
+  title: string;
+  priority: 'HIGH' | 'MEDIUM' | 'LOW';
+  dueDate: Date;
+}
 
 export interface Board {
   id: number;
@@ -162,13 +166,19 @@ export class BoardService {
 
   // ── Task Mutations ────────────────────────────────────────────────────────────
 
-  addTask(boardId: number, column: keyof NonNullable<Board['columns']>, title: string) {
+  addTask(
+    boardId: number,
+    column: keyof NonNullable<Board['columns']>,
+    title: string,
+    priority: 'HIGH' | 'MEDIUM' | 'LOW',
+    dueDate: Date
+  ) {
     const boards = this.boards.map(b => {
       if (b.id !== boardId) return b;
       const copy: Board = { ...b, columns: { ...(b.columns as any) } };
       (copy.columns as any)[column] = [
         ...((copy.columns as any)[column] || []),
-        { title }
+        { title, priority, dueDate }
       ];
       return copy;
     });
@@ -182,13 +192,20 @@ export class BoardService {
     this.saveBoards();
   }
 
-  updateTask(boardId: number, column: keyof NonNullable<Board['columns']>, index: number, title: string) {
+  updateTask(
+    boardId: number,
+    column: keyof NonNullable<Board['columns']>,
+    index: number,
+    title: string,
+    priority: 'HIGH' | 'MEDIUM' | 'LOW',
+    dueDate: Date
+  ) {
     const boards = this.boards.map(b => {
       if (b.id !== boardId) return b;
       const copy: Board = { ...b, columns: { ...(b.columns as any) } };
       const col = ((copy.columns as any)[column] || []).slice();
       if (index >= 0 && index < col.length) {
-        col[index] = { ...col[index], title };
+        col[index] = { ...col[index], title, priority, dueDate };
       }
       (copy.columns as any)[column] = col;
       return copy;

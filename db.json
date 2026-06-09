@@ -1,0 +1,28 @@
+{
+  "tasks": [
+    {
+      "id": 1,
+      "title": "Design Login Page",
+      "status": "Todo",
+      "priority": "High"
+    },
+    {
+      "id": 2,
+      "title": "Integrate API",
+      "status": "In Progress",
+      "priority": "Medium"
+    },
+    {
+      "id": 3,
+      "title": "Review Dashboard",
+      "status": "Review",
+      "priority": "Low"
+    },
+    {
+      "id": 4,
+      "title": "Deploy App",
+      "status": "Done",
+      "priority": "High"
+    }
+  ]
+}
