@@ -1,0 +1,93 @@
+<div class="board-details-container">
+  <div class="dialog-header">
+    <mat-icon class="header-icon">info</mat-icon>
+    <h2 class="dialog-title">Board Details</h2>
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <div class="dialog-content">
+    <div class="details-grid">
+      <!-- Board Name -->
+      <div class="detail-item">
+        <span class="emoji">📌</span>
+        <div class="detail-text">
+          <label>Board Name</label>
+          <span class="value">{{ data.boardName }}</span>
+        </div>
+      </div>
+
+      <!-- Owner -->
+      <div class="detail-item">
+        <span class="emoji">👤</span>
+        <div class="detail-text">
+          <label>Owner</label>
+          <span class="value">{{ data.owner }}</span>
+        </div>
+      </div>
+
+      <!-- Created Date -->
+      <div class="detail-item">
+        <span class="emoji">📅</span>
+        <div class="detail-text">
+          <label>Created Date</label>
+          <span class="value">{{ data.createdDate | date:'mediumDate' }}</span>
+        </div>
+      </div>
+
+      <!-- Total Tasks -->
+      <div class="detail-item total-tasks">
+        <span class="emoji">✅</span>
+        <div class="detail-text">
+          <label>Total Tasks</label>
+          <span class="value count-total">{{ totalTasks }}</span>
+        </div>
+      </div>
+    </div>
+
+    <mat-divider class="content-divider"></mat-divider>
+
+    <h3 class="section-subtitle">Task Breakdown</h3>
+    <div class="breakdown-grid">
+      <!-- Todo -->
+      <div class="breakdown-item col-todo">
+        <div class="label-row">
+          <span class="badge-dot dot-todo">🟦</span>
+          <span class="column-name">Todo</span>
+        </div>
+        <span class="count">{{ data.todoCount }}</span>
+      </div>
+
+      <!-- In Progress -->
+      <div class="breakdown-item col-inprogress">
+        <div class="label-row">
+          <span class="badge-dot dot-inprogress">🟧</span>
+          <span class="column-name">In Progress</span>
+        </div>
+        <span class="count">{{ data.inprogressCount }}</span>
+      </div>
+
+      <!-- Review -->
+      <div class="breakdown-item col-review">
+        <div class="label-row">
+          <span class="badge-dot dot-review">🟪</span>
+          <span class="column-name">Review</span>
+        </div>
+        <span class="count">{{ data.reviewCount }}</span>
+      </div>
+
+      <!-- Done -->
+      <div class="breakdown-item col-done">
+        <div class="label-row">
+          <span class="badge-dot dot-done">🟩</span>
+          <span class="column-name">Done</span>
+        </div>
+        <span class="count">{{ data.doneCount }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="dialog-actions">
+    <button mat-flat-button color="primary" class="close-btn" (click)="close()">Close</button>
+  </div>
+</div>

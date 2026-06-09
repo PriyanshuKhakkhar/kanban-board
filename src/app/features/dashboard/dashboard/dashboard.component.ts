@@ -11,6 +11,8 @@ import { CreateBoardDialogComponent } from '../../../shared/components/create-bo
 import { TaskDialogComponent, TaskDialogData } from '../../../shared/components/task-dialog/task-dialog.component';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { TaskFormDialogComponent, TaskFormDialogData } from '../../../shared/components/task-form-dialog/task-form-dialog.component';
+import { BoardDetailsDialogComponent } from '../../../shared/components/board-details-dialog/board-details-dialog.component';
+import { AuthService } from '../../../features/auth/auth.service';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
@@ -30,7 +32,8 @@ import { DragDropModule, CdkDragDrop, moveItemInArray, transferArrayItem } from 
     MatButtonModule,
     MatDividerModule,
     DragDropModule,
-    TaskFormDialogComponent
+    TaskFormDialogComponent,
+    BoardDetailsDialogComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
@@ -57,7 +60,8 @@ export class DashboardComponent implements OnInit {
     private boardService: BoardService,
     private router: Router,
     private dialog: MatDialog,
-    private taskService: TaskService
+    private taskService: TaskService,
+    private authService: AuthService
   ) {
     this.boards$ = this.boardService.boards$;
     this.active$ = this.boardService.active$;
@@ -165,8 +169,18 @@ export class DashboardComponent implements OnInit {
 
   openBoardDetails(b: Board | null) {
     if (!b) return;
-    // Board details shown via the existing board header — no browser alert needed
-    console.log('Board details:', b);
+    this.dialog.open(BoardDetailsDialogComponent, {
+      width: '500px',
+      data: {
+        boardName: b.name,
+        owner: this.authService.getCurrentUserEmail() ?? 'guest',
+        createdDate: b.createdAt,
+        todoCount: this.filteredTodoTasks.length,
+        inprogressCount: this.filteredInprogressTasks.length,
+        reviewCount: this.filteredReviewTasks.length,
+        doneCount: this.filteredDoneTasks.length
+      }
+    });
   }
 
   renameBoard(b: Board | null) {
