@@ -61,12 +61,38 @@ export class BoardService {
     const key = this.getBoardsKey();
     const raw = localStorage.getItem(key);
     if (!raw) {
-      this.boardsSubject.next([]);
-      this.activeSubject.next(null);
+      const defaultBoard: Board = {
+        id: 1,
+        name: 'CR-205',
+        createdAt: new Date().toISOString(),
+        columns: {
+          todo: [],
+          inprogress: [],
+          review: [],
+          done: []
+        }
+      };
+      this.boardsSubject.next([defaultBoard]);
+      this.activeSubject.next(defaultBoard);
+      localStorage.setItem(key, JSON.stringify([defaultBoard]));
       return;
     }
     try {
-      const boards = JSON.parse(raw) as Board[];
+      let boards = JSON.parse(raw) as Board[];
+      
+      // Migration: Ensure any board named 'CR-205' has ID 1 to match the db.json task seeds
+      let migrated = false;
+      boards = boards.map(b => {
+        if (b.name === 'CR-205' && b.id !== 1) {
+          migrated = true;
+          return { ...b, id: 1 };
+        }
+        return b;
+      });
+      if (migrated) {
+        localStorage.setItem(key, JSON.stringify(boards));
+      }
+
       this.boardsSubject.next(boards);
       // Restore active board (first board by default if previously active is gone)
       const active = this.activeSubject.getValue();
