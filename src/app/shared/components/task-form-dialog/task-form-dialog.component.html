@@ -30,6 +30,25 @@
         </div>
       </div>
 
+      <!-- Description -->
+      <div class="form-group">
+        <label class="kb-label" for="task-description">Description</label>
+        <textarea
+          id="task-description"
+          class="kb-input"
+          formControlName="description"
+          placeholder="Enter task description"
+          rows="3"
+          style="resize: vertical; min-height: 80px;"
+        ></textarea>
+        <div class="error-msg" *ngIf="form.get('description')?.touched && form.get('description')?.errors?.['required']">
+          Description is required.
+        </div>
+        <div class="error-msg" *ngIf="form.get('description')?.touched && (form.get('description')?.errors?.['minlength'] || form.get('description')?.errors?.['maxlength'])">
+          Description must be between 10 and 500 characters.
+        </div>
+      </div>
+
       <!-- Priority -->
       <div class="form-group">
         <label class="kb-label" for="task-priority">Priority</label>
@@ -41,6 +60,41 @@
         </select>
         <div class="error-msg" *ngIf="form.get('priority')?.touched && form.get('priority')?.errors?.['required']">
           Priority is required
+        </div>
+      </div>
+
+      <!-- Assignee -->
+      <div class="form-group relative-container">
+        <label class="kb-label" for="task-assignee">Assignee</label>
+        <div class="search-select-container">
+          <input
+            id="task-assignee"
+            class="kb-input kb-select-search"
+            type="text"
+            formControlName="_assigneeSearch"
+            placeholder="Select assignee"
+            (focus)="onAssigneeFocus()"
+            (input)="onAssigneeInput($event)"
+            (blur)="onAssigneeBlur()"
+            autocomplete="off"
+          />
+          <div class="dropdown-list" *ngIf="isDropdownOpen">
+            <ng-container *ngIf="filteredUsers.length > 0; else noUsers">
+              <div
+                *ngFor="let user of filteredUsers"
+                class="dropdown-item"
+                (mousedown)="selectAssignee(user)"
+              >
+                {{ user.fullName }}
+              </div>
+            </ng-container>
+            <ng-template #noUsers>
+              <div class="dropdown-item empty">No users found</div>
+            </ng-template>
+          </div>
+        </div>
+        <div class="error-msg" *ngIf="form.get('assigneeId')?.touched && form.get('assigneeId')?.errors?.['required']">
+          Assignee is required
         </div>
       </div>
 

@@ -80,6 +80,47 @@ export class DashboardComponent implements OnInit {
     return this.isAdmin;
   }
 
+  get currentUserId(): string | null {
+    const email = this.authService.getCurrentUserEmail();
+    if (!email) return null;
+    const raw = localStorage.getItem('users');
+    if (raw) {
+      try {
+        const users = JSON.parse(raw) as any[];
+        const found = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+        if (found) return String(found.id);
+      } catch {}
+    }
+    return null;
+  }
+
+  isAssignedToCurrentUser(task: any): boolean {
+    const loggedInId = this.currentUserId;
+    if (loggedInId && task.assigneeId && String(task.assigneeId) === String(loggedInId)) {
+      return true;
+    }
+    const currentUser = this.authService.getCurrentUser();
+    if (currentUser) {
+      if (task.assigneeName && currentUser.fullName && task.assigneeName.toLowerCase() === currentUser.fullName.toLowerCase()) {
+        return true;
+      }
+      if (task.assigneeId && currentUser.email && String(task.assigneeId).toLowerCase() === currentUser.email.toLowerCase()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  canEditTask(task: any): boolean {
+    if (this.isAdmin || this.isHR || this.isUser) return true;
+    return false;
+  }
+
+  canDeleteTask(task: any): boolean {
+    if (this.isAdmin || this.isUser) return true;
+    return false;
+  }
+
   constructor(
     private boardService: BoardService,
     private router: Router,
@@ -285,7 +326,7 @@ export class DashboardComponent implements OnInit {
   }
   
   editTask(column: 'todo' | 'inprogress' | 'review' | 'done', index: number, task: any) {
-    if (!this.canWriteTasks) return;
+    if (!this.canEditTask(task)) return;
     const data: TaskFormDialogData = {
       title: 'Edit Task',
       task,
@@ -302,8 +343,11 @@ export class DashboardComponent implements OnInit {
       const apiTask = {
         ...task,
         title: updatedTask.title,
+        description: updatedTask.description,
         priority: updatedTask.priority,
-        dueDate: updatedTask.dueDate
+        dueDate: updatedTask.dueDate,
+        assigneeId: updatedTask.assigneeId,
+        assigneeName: updatedTask.assigneeName
       };
 
       this.taskService.updateTask(apiTask).subscribe({
@@ -316,10 +360,10 @@ export class DashboardComponent implements OnInit {
   }
 
   deleteTask(column: 'todo' | 'inprogress' | 'review' | 'done', index: number, task: any) {
-    if (!this.canDeleteTasks) return;
+    if (!this.canDeleteTask(task)) return;
     const data: ConfirmDialogData = {
       title: 'Delete Task',
-      message: `Delete task "${task.title}"?`,
+      message: 'Are you sure you want to delete this task?',
       confirmLabel: 'Delete',
       danger: true
     };
@@ -356,8 +400,11 @@ export class DashboardComponent implements OnInit {
 
       const apiTask = {
         title: newTask.title,
+        description: newTask.description,
         priority: newTask.priority || 'MEDIUM',
         dueDate: newTask.dueDate,
+        assigneeId: newTask.assigneeId,
+        assigneeName: newTask.assigneeName,
         status: this.getStatusFromColumnId(column),
         boardId: this.currentBoard?.id
       };

@@ -209,4 +209,16 @@ export class AuthService {
     const user = this.getCurrentUser();
     return user ? user.email : localStorage.getItem('currentUserEmail');
   }
+
+  getAllUsers(): Observable<User[]> {
+    return this.http.get<User[]>(this.apiUrl).pipe(
+      map(users => {
+        localStorage.setItem('users', JSON.stringify(users));
+        return users;
+      }),
+      catchError(() => {
+        return of(this.getUsers());
+      })
+    );
+  }
 }

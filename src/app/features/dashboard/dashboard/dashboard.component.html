@@ -165,7 +165,7 @@
               </div>
               <div class="card-actions">
                 <button
-                  *ngIf="canWriteTasks"
+                  *ngIf="canEditTask(task)"
                   class="action-btn edit"
                   (click)="editTask('todo', i, task)"
                   aria-label="Edit"
@@ -180,7 +180,7 @@
                   </svg>
                 </button>
                 <button
-                  *ngIf="canDeleteTasks"
+                  *ngIf="canDeleteTask(task)"
                   class="action-btn delete"
                   (click)="deleteTask('todo', i, task)"
                   aria-label="Delete"
@@ -236,7 +236,7 @@
               </div>
               <div class="card-actions">
                 <button
-                  *ngIf="canWriteTasks"
+                  *ngIf="canEditTask(task)"
                   class="action-btn edit"
                   (click)="editTask('inprogress', i, task)"
                   aria-label="Edit"
@@ -251,7 +251,7 @@
                   </svg>
                 </button>
                 <button
-                  *ngIf="canDeleteTasks"
+                  *ngIf="canDeleteTask(task)"
                   class="action-btn delete"
                   (click)="deleteTask('inprogress', i, task)"
                   aria-label="Delete"
@@ -307,7 +307,7 @@
               </div>
               <div class="card-actions">
                 <button
-                  *ngIf="canWriteTasks"
+                  *ngIf="canEditTask(task)"
                   class="action-btn edit"
                   (click)="editTask('review', i, task)"
                   aria-label="Edit"
@@ -322,7 +322,7 @@
                   </svg>
                 </button>
                 <button
-                  *ngIf="canDeleteTasks"
+                  *ngIf="canDeleteTask(task)"
                   class="action-btn delete"
                   (click)="deleteTask('review', i, task)"
                   aria-label="Delete"
@@ -378,7 +378,7 @@
               </div>
               <div class="card-actions">
                 <button
-                  *ngIf="canWriteTasks"
+                  *ngIf="canEditTask(task)"
                   class="action-btn edit"
                   (click)="editTask('done', i, task)"
                   aria-label="Edit"
@@ -393,7 +393,7 @@
                   </svg>
                 </button>
                 <button
-                  *ngIf="canDeleteTasks"
+                  *ngIf="canDeleteTask(task)"
                   class="action-btn delete"
                   (click)="deleteTask('done', i, task)"
                   aria-label="Delete"

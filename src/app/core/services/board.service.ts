@@ -4,9 +4,15 @@ import { moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { AuthService } from '../../features/auth/auth.service';
 
 export interface Task {
+  id?: any;
+  boardId?: any;
+  status?: string;
   title: string;
+  description?: string;
   priority: 'HIGH' | 'MEDIUM' | 'LOW';
   dueDate: Date;
+  assigneeId?: any;
+  assigneeName?: string;
 }
 
 export interface Board {
