@@ -342,12 +342,13 @@ export class DashboardComponent implements OnInit {
 
       const apiTask = {
         ...task,
-        title: updatedTask.title,
-        description: updatedTask.description,
-        priority: updatedTask.priority,
-        dueDate: updatedTask.dueDate,
-        assigneeId: updatedTask.assigneeId,
-        assigneeName: updatedTask.assigneeName
+        title: updatedTask.title ? updatedTask.title.trim() : task.title,
+        description: (updatedTask.description && updatedTask.description.trim()) ? updatedTask.description.trim() : task.description,
+        priority: updatedTask.priority ? updatedTask.priority : task.priority,
+        dueDate: updatedTask.dueDate ? updatedTask.dueDate : task.dueDate,
+        assigneeId: updatedTask.assigneeId ? updatedTask.assigneeId : task.assigneeId,
+        assigneeName: updatedTask.assigneeName ? updatedTask.assigneeName : task.assigneeName,
+        isComplete: updatedTask.isComplete !== undefined ? updatedTask.isComplete : task.isComplete
       };
 
       this.taskService.updateTask(apiTask).subscribe({
@@ -405,6 +406,7 @@ export class DashboardComponent implements OnInit {
         dueDate: newTask.dueDate,
         assigneeId: newTask.assigneeId,
         assigneeName: newTask.assigneeName,
+        isComplete: newTask.isComplete || false,
         status: this.getStatusFromColumnId(column),
         boardId: this.currentBoard?.id
       };
@@ -458,15 +460,72 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  isMoveAllowed(previousColumn: string, currentColumn: string): boolean {
+    const role = this.authService.getCurrentUserRole() || 'USER';
+
+    // Once Task is Done then No one can revert it
+    if (previousColumn === 'done' && currentColumn !== 'done') {
+      return false;
+    }
+
+    // ADMIN has full permissions
+    if (role === 'ADMIN') {
+      return true;
+    }
+
+    // HR can move: Todo -> In Progress, In Progress -> Review, Review -> Done
+    if (role === 'HR') {
+      if (previousColumn === 'todo' && currentColumn === 'inprogress') {
+        return true;
+      }
+      if (previousColumn === 'inprogress' && currentColumn === 'review') {
+        return true;
+      }
+      if (previousColumn === 'review' && currentColumn === 'done') {
+        return true;
+      }
+      return false;
+    }
+
+    // USER can move tasks: Todo -> In Progress, In Progress -> Review
+    if (role === 'USER') {
+      if (previousColumn === 'todo' && currentColumn === 'inprogress') {
+        return true;
+      }
+      if (previousColumn === 'inprogress' && currentColumn === 'review') {
+        return true;
+      }
+      return false;
+    }
+
+    return false;
+  }
+
   drop(event: CdkDragDrop<any[]>) {
-    if (!this.canWriteTasks) return;
     const previousColumn = event.previousContainer.id as 'todo' | 'inprogress' | 'review' | 'done';
     const currentColumn = event.container.id as 'todo' | 'inprogress' | 'review' | 'done';
-    const draggedTask = event.previousContainer.data[event.previousIndex];
 
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
+      const draggedTask = event.previousContainer.data[event.previousIndex];
+
+      // 1. Check if the role is allowed to perform this transition
+      if (!this.isMoveAllowed(previousColumn, currentColumn)) {
+        alert("You are not authorized to move this task to that status.");
+        this.loadApiTasks();
+        return;
+      }
+
+      // 2. Validate the isComplete condition for In Progress -> Review
+      if (previousColumn === 'inprogress' && currentColumn === 'review') {
+        if (!draggedTask.isComplete) {
+          alert("Please mark the task as complete before moving it to Review.");
+          this.loadApiTasks();
+          return;
+        }
+      }
+
       transferArrayItem(
         event.previousContainer.data,
         event.container.data,

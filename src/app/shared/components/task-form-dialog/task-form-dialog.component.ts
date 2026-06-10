@@ -38,26 +38,42 @@ export class TaskFormDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    let initialDateStr = '';
-    if (this.data.task?.dueDate) {
-      const dateObj = new Date(this.data.task.dueDate);
-      if (!isNaN(dateObj.getTime())) {
-        initialDateStr = dateObj.toISOString().split('T')[0];
-      }
-    }
-
+    // Initialize form with defaults
     this.form = this.fb.group({
-      title: [this.data.task?.title ?? '', Validators.required],
+      title: ['', Validators.required],
       description: [
-        this.data.task?.description ?? '',
+        '',
         [Validators.required, Validators.minLength(10), Validators.maxLength(500)]
       ],
-      priority: [this.data.task?.priority ?? '', Validators.required],
-      dueDate: [initialDateStr, Validators.required],
-      assigneeId: [this.data.task?.assigneeId ?? '', Validators.required],
-      assigneeName: [this.data.task?.assigneeName ?? '', Validators.required],
-      _assigneeSearch: [this.data.task?.assigneeName ?? '']
+      priority: ['', Validators.required],
+      dueDate: ['', Validators.required],
+      assigneeId: ['', Validators.required],
+      assigneeName: ['', Validators.required],
+      _assigneeSearch: [''],
+      isComplete: [false]
     });
+
+    // Populate form if task is being edited
+    if (this.data.task) {
+      let initialDateStr = '';
+      if (this.data.task.dueDate) {
+        const dateObj = new Date(this.data.task.dueDate);
+        if (!isNaN(dateObj.getTime())) {
+          initialDateStr = dateObj.toISOString().split('T')[0];
+        }
+      }
+
+      this.form.patchValue({
+        title: this.data.task.title ?? '',
+        description: this.data.task.description ?? '',
+        priority: this.data.task.priority ?? '',
+        dueDate: initialDateStr,
+        assigneeId: this.data.task.assigneeId ?? '',
+        assigneeName: this.data.task.assigneeName ?? '',
+        _assigneeSearch: this.data.task.assigneeName ?? '',
+        isComplete: this.data.task.isComplete ?? false
+      });
+    }
 
     this.loadUsers();
   }
@@ -132,6 +148,10 @@ export class TaskFormDialogComponent implements OnInit {
     this.isDropdownOpen = false;
   }
 
+  get isTaskInProgress(): boolean {
+    return this.data.task?.status?.toLowerCase() === 'in progress';
+  }
+
   submit(): void {
     this.form.markAllAsTouched();
     if (this.form.invalid) return;
@@ -143,7 +163,8 @@ export class TaskFormDialogComponent implements OnInit {
       priority: formVal.priority as 'HIGH' | 'MEDIUM' | 'LOW',
       dueDate: new Date(formVal.dueDate),
       assigneeId: formVal.assigneeId,
-      assigneeName: formVal.assigneeName
+      assigneeName: formVal.assigneeName,
+      isComplete: formVal.isComplete === true
     };
 
     this.dialogRef.close(taskResult);

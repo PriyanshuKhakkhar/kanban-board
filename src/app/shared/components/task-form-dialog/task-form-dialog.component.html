@@ -111,6 +111,31 @@
           Due Date is required
         </div>
       </div>
+
+      <!-- Is Complete -->
+      <div class="form-group" *ngIf="isTaskInProgress">
+        <label class="kb-label">Is Complete?</label>
+        <div class="radio-group">
+          <label class="radio-label">
+            <input
+              type="radio"
+              [value]="true"
+              formControlName="isComplete"
+              class="kb-radio"
+            />
+            <span class="radio-text">Yes</span>
+          </label>
+          <label class="radio-label">
+            <input
+              type="radio"
+              [value]="false"
+              formControlName="isComplete"
+              class="kb-radio"
+            />
+            <span class="radio-text">No</span>
+          </label>
+        </div>
+      </div>
     </div>
 
     <!-- Footer -->

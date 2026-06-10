@@ -80,6 +80,13 @@
       aria-label="Profile"
     >
       <div class="profile-avatar">{{ userInitials }}</div>
+
+      <!-- Hover Tooltip -->
+      <div class="profile-tooltip" *ngIf="currentUser">
+        <div class="tooltip-name">{{ currentUser.fullName }}</div>
+        <div class="tooltip-email">{{ currentUser.email }}</div>
+        <div class="tooltip-role">Role: {{ currentUser.role }}</div>
+      </div>
     </button>
 
     <mat-menu #notifMenu="matMenu">

@@ -278,6 +278,36 @@
   }
 }
 
+/* ─── Task Completion Status Indicator ────────────────────────────────── */
+.completion-status-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  margin-bottom: 8px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-indicator-dot {
+  font-size: 12px;
+  color: #ef4444; /* Default: Red for Not Completed */
+  transition: color 0.15s ease;
+
+  &.completed {
+    color: #10b981; /* Green for Completed */
+  }
+}
+
+.status-indicator-text {
+  color: #ef4444; /* Default: Red for Not Completed */
+  transition: color 0.15s ease;
+
+  &.completed {
+    color: #10b981; /* Green for Completed */
+  }
+}
+
 @media (max-width: 1100px) {
   .board-container { grid-template-columns: repeat(2, minmax(220px, 1fr)); }
 }

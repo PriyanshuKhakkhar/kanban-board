@@ -13,6 +13,7 @@ export interface Task {
   dueDate: Date;
   assigneeId?: any;
   assigneeName?: string;
+  isComplete?: boolean;
 }
 
 export interface Board {

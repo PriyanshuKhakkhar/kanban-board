@@ -7,7 +7,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { CreateBoardDialogComponent } from '../create-board-dialog/create-board-dialog.component';
 import { BoardService } from '../../../core/services/board.service';
-import { AuthService } from '../../../features/auth/auth.service';
+import { AuthService, User } from '../../../features/auth/auth.service';
 import { ThemeSwitcherComponent } from '../theme-switcher/theme-switcher.component';
 
 @Component({
@@ -31,6 +31,10 @@ export class NavbarComponent {
 
   get canManageBoards(): boolean {
     return this.authService.getCurrentUserRole() === 'ADMIN';
+  }
+
+  get currentUser(): User | null {
+    return this.authService.getCurrentUser();
   }
 
   get userInitials(): string {

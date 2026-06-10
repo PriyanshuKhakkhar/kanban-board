@@ -145,7 +145,7 @@
             cdkDropList
             id="todo"
             [cdkDropListData]="filteredTodoTasks"
-            [cdkDropListDisabled]="!canWriteTasks"
+            [cdkDropListDisabled]="false"
             (cdkDropListDropped)="drop($event)"
           >
             <div
@@ -216,7 +216,7 @@
             cdkDropList
             id="inprogress"
             [cdkDropListData]="filteredInprogressTasks"
-            [cdkDropListDisabled]="!canWriteTasks"
+            [cdkDropListDisabled]="false"
             (cdkDropListDropped)="drop($event)"
           >
             <div
@@ -225,6 +225,14 @@
               cdkDrag
             >
               <div class="card-title">{{ task.title }}</div>
+              
+              <!-- Task Completion Status Indicator -->
+              <div class="completion-status-container">
+                <span class="status-indicator-dot" [class.completed]="task.isComplete">●</span>
+                <span class="status-indicator-text" [class.completed]="task.isComplete">
+                  {{ task.isComplete ? 'Completed' : 'Not Completed' }}
+                </span>
+              </div>
               <div class="card-meta" *ngIf="task.priority || task.dueDate">
                 <span class="badge priority" *ngIf="task.priority" [ngClass]="getPriorityClass(task.priority)">
                   {{ task.priority | titlecase }}
@@ -287,7 +295,7 @@
             cdkDropList
             id="review"
             [cdkDropListData]="filteredReviewTasks"
-            [cdkDropListDisabled]="!canWriteTasks"
+            [cdkDropListDisabled]="false"
             (cdkDropListDropped)="drop($event)"
           >
             <div
@@ -358,7 +366,7 @@
             cdkDropList
             id="done"
             [cdkDropListData]="filteredDoneTasks"
-            [cdkDropListDisabled]="!canWriteTasks"
+            [cdkDropListDisabled]="false"
             (cdkDropListDropped)="drop($event)"
           >
             <div
