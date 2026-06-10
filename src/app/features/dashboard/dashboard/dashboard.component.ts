@@ -56,6 +56,30 @@ export class DashboardComponent implements OnInit {
     return this.activeFilterSubject.getValue();
   }
 
+  get isAdmin(): boolean {
+    return this.authService.getCurrentUserRole() === 'ADMIN';
+  }
+
+  get isHR(): boolean {
+    return this.authService.getCurrentUserRole() === 'HR';
+  }
+
+  get isUser(): boolean {
+    return this.authService.getCurrentUserRole() === 'USER';
+  }
+
+  get canManageBoards(): boolean {
+    return this.isAdmin;
+  }
+
+  get canWriteTasks(): boolean {
+    return this.isAdmin || this.isHR;
+  }
+
+  get canDeleteTasks(): boolean {
+    return this.isAdmin;
+  }
+
   constructor(
     private boardService: BoardService,
     private router: Router,
@@ -184,7 +208,7 @@ export class DashboardComponent implements OnInit {
   }
 
   renameBoard(b: Board | null) {
-    if (!b) return;
+    if (!this.canManageBoards || !b) return;
     const data: TaskDialogData = {
       title: 'Rename Board',
       label: 'Board name',
@@ -204,12 +228,12 @@ export class DashboardComponent implements OnInit {
   }
 
   duplicateBoard(b: Board | null) {
-    if (!b) return;
+    if (!this.canManageBoards || !b) return;
     this.boardService.duplicateBoard(b.id);
   }
 
   deleteBoard(b: Board | null) {
-    if (!b) return;
+    if (!this.canManageBoards || !b) return;
     const data: ConfirmDialogData = {
       title: 'Delete Board',
       message: `Delete board "${b.name}"? This cannot be undone.`,
@@ -233,6 +257,7 @@ export class DashboardComponent implements OnInit {
   }
 
   openCreateDialog() {
+    if (!this.canManageBoards) return;
     const ref = this.dialog.open(CreateBoardDialogComponent, { width: '420px' });
     ref.afterClosed().subscribe((board) => {
       if (board) {
@@ -260,6 +285,7 @@ export class DashboardComponent implements OnInit {
   }
   
   editTask(column: 'todo' | 'inprogress' | 'review' | 'done', index: number, task: any) {
+    if (!this.canWriteTasks) return;
     const data: TaskFormDialogData = {
       title: 'Edit Task',
       task,
@@ -290,6 +316,7 @@ export class DashboardComponent implements OnInit {
   }
 
   deleteTask(column: 'todo' | 'inprogress' | 'review' | 'done', index: number, task: any) {
+    if (!this.canDeleteTasks) return;
     const data: ConfirmDialogData = {
       title: 'Delete Task',
       message: `Delete task "${task.title}"?`,
@@ -314,6 +341,7 @@ export class DashboardComponent implements OnInit {
   }
 
   addCard(column: 'todo' | 'inprogress' | 'review' | 'done'): void {
+    if (!this.canWriteTasks) return;
     const data: TaskFormDialogData = {
       title: 'Add Task',
       submitLabel: 'Add'
@@ -362,6 +390,7 @@ export class DashboardComponent implements OnInit {
   }
 
   createTask(column: 'todo' | 'inprogress' | 'review' | 'done', title: string) {
+    if (!this.canWriteTasks) return;
     const text = (title || '').trim();
     if (!text) return;
 
@@ -383,6 +412,7 @@ export class DashboardComponent implements OnInit {
   }
 
   drop(event: CdkDragDrop<any[]>) {
+    if (!this.canWriteTasks) return;
     const previousColumn = event.previousContainer.id as 'todo' | 'inprogress' | 'review' | 'done';
     const currentColumn = event.container.id as 'todo' | 'inprogress' | 'review' | 'done';
     const draggedTask = event.previousContainer.data[event.previousIndex];

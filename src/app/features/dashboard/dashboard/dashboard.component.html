@@ -6,7 +6,7 @@
       <a routerLink="/dashboard" routerLinkActive="active" class="nav-item"
         >Home</a
       >
-      <a routerLink="/boards" routerLinkActive="active" class="nav-item"
+      <a *ngIf="isAdmin || isHR" routerLink="/boards" routerLinkActive="active" class="nav-item"
         >Boards</a
       >
 
@@ -23,7 +23,7 @@
           </div>
         </div>
 
-        <button class="create-board-btn" (click)="openCreateDialog()">
+        <button *ngIf="canManageBoards" class="create-board-btn" (click)="openCreateDialog()">
           + Create Board
         </button>
       </div>
@@ -74,7 +74,7 @@
             <mat-icon>{{ active.favorite ? "star" : "star_border" }}</mat-icon>
           </button>
 
-          <button mat-icon-button [matMenuTriggerFor]="moreMenu">
+          <button *ngIf="canManageBoards" mat-icon-button [matMenuTriggerFor]="moreMenu">
             <mat-icon>more_vert</mat-icon>
           </button>
         </div>
@@ -135,7 +135,7 @@
               <h3>To Do</h3>
               <span class="count">{{ filteredTodoTasks.length }}</span>
             </div>
-            <button class="add-card" (click)="addCard('todo')">
+            <button *ngIf="canWriteTasks" class="add-card" (click)="addCard('todo')">
               + Add card
             </button>
           </div>
@@ -145,6 +145,7 @@
             cdkDropList
             id="todo"
             [cdkDropListData]="filteredTodoTasks"
+            [cdkDropListDisabled]="!canWriteTasks"
             (cdkDropListDropped)="drop($event)"
           >
             <div
@@ -164,6 +165,7 @@
               </div>
               <div class="card-actions">
                 <button
+                  *ngIf="canWriteTasks"
                   class="action-btn edit"
                   (click)="editTask('todo', i, task)"
                   aria-label="Edit"
@@ -178,6 +180,7 @@
                   </svg>
                 </button>
                 <button
+                  *ngIf="canDeleteTasks"
                   class="action-btn delete"
                   (click)="deleteTask('todo', i, task)"
                   aria-label="Delete"
@@ -206,7 +209,7 @@
               <h3>In Progress</h3>
               <span class="count">{{ filteredInprogressTasks.length }}</span>
             </div>
-            <button class="add-card" (click)="addCard('inprogress')">
+            <button *ngIf="canWriteTasks" class="add-card" (click)="addCard('inprogress')">
               + Add card
             </button>
           </div>
@@ -216,6 +219,7 @@
             cdkDropList
             id="inprogress"
             [cdkDropListData]="filteredInprogressTasks"
+            [cdkDropListDisabled]="!canWriteTasks"
             (cdkDropListDropped)="drop($event)"
           >
             <div
@@ -235,6 +239,7 @@
               </div>
               <div class="card-actions">
                 <button
+                  *ngIf="canWriteTasks"
                   class="action-btn edit"
                   (click)="editTask('inprogress', i, task)"
                   aria-label="Edit"
@@ -249,6 +254,7 @@
                   </svg>
                 </button>
                 <button
+                  *ngIf="canDeleteTasks"
                   class="action-btn delete"
                   (click)="deleteTask('inprogress', i, task)"
                   aria-label="Delete"
@@ -277,7 +283,7 @@
               <h3>Review</h3>
               <span class="count">{{ filteredReviewTasks.length }}</span>
             </div>
-            <button class="add-card" (click)="addCard('review')">
+            <button *ngIf="canWriteTasks" class="add-card" (click)="addCard('review')">
               + Add card
             </button>
           </div>
@@ -287,6 +293,7 @@
             cdkDropList
             id="review"
             [cdkDropListData]="filteredReviewTasks"
+            [cdkDropListDisabled]="!canWriteTasks"
             (cdkDropListDropped)="drop($event)"
           >
             <div
@@ -306,6 +313,7 @@
               </div>
               <div class="card-actions">
                 <button
+                  *ngIf="canWriteTasks"
                   class="action-btn edit"
                   (click)="editTask('review', i, task)"
                   aria-label="Edit"
@@ -320,6 +328,7 @@
                   </svg>
                 </button>
                 <button
+                  *ngIf="canDeleteTasks"
                   class="action-btn delete"
                   (click)="deleteTask('review', i, task)"
                   aria-label="Delete"
@@ -348,7 +357,7 @@
               <h3>Done</h3>
               <span class="count">{{ filteredDoneTasks.length }}</span>
             </div>
-            <button class="add-card" (click)="addCard('done')">
+            <button *ngIf="canWriteTasks" class="add-card" (click)="addCard('done')">
               + Add card
             </button>
           </div>
@@ -358,6 +367,7 @@
             cdkDropList
             id="done"
             [cdkDropListData]="filteredDoneTasks"
+            [cdkDropListDisabled]="!canWriteTasks"
             (cdkDropListDropped)="drop($event)"
           >
             <div
@@ -377,6 +387,7 @@
               </div>
               <div class="card-actions">
                 <button
+                  *ngIf="canWriteTasks"
                   class="action-btn edit"
                   (click)="editTask('done', i, task)"
                   aria-label="Edit"
@@ -391,6 +402,7 @@
                   </svg>
                 </button>
                 <button
+                  *ngIf="canDeleteTasks"
                   class="action-btn delete"
                   (click)="deleteTask('done', i, task)"
                   aria-label="Delete"

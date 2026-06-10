@@ -28,7 +28,22 @@ import { ThemeSwitcherComponent } from '../theme-switcher/theme-switcher.compone
 export class NavbarComponent {
   useImageLogo = true;
   notificationsCount = 0;
-  userInitials = 'PK';
+
+  get canManageBoards(): boolean {
+    return this.authService.getCurrentUserRole() === 'ADMIN';
+  }
+
+  get userInitials(): string {
+    const email = this.authService.getCurrentUserEmail();
+    if (!email) return 'GU';
+    const user = this.authService.getCurrentUser();
+    if (user && user.fullName) {
+      const parts = user.fullName.trim().split(/\s+/);
+      const initials = parts.map(p => p[0]).join('').toUpperCase();
+      return initials.substring(0, 2);
+    }
+    return email.substring(0, 2).toUpperCase();
+  }
 
   onLogout() {
     this.authService.logout();
@@ -45,6 +60,7 @@ export class NavbarComponent {
   ) {}
 
   openCreateDialog() {
+    if (!this.canManageBoards) return;
     const ref = this.dialog.open(CreateBoardDialogComponent, { width: '420px' });
     ref.afterClosed().subscribe((board) => {
       if (board) {

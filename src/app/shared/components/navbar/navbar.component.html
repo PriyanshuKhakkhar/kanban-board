@@ -46,6 +46,7 @@
     </div>
 
     <button
+      *ngIf="canManageBoards"
       mat-flat-button
       class="trello-create-btn"
       (click)="openCreateDialog()"

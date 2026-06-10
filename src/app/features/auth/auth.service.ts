@@ -1,18 +1,45 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 
 export interface User {
+  id?: string | number;
   fullName: string;
+  name?: string; // compatibility with legacy name properties
   email: string;
   password: string;
+  role: 'ADMIN' | 'HR' | 'USER';
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+  private apiUrl = 'http://localhost:3000/users';
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private http: HttpClient) {
+    this.syncUsersWithDb();
+  }
+
+  private syncUsersWithDb(): void {
+    this.http.get<User[]>(this.apiUrl).subscribe({
+      next: (users) => {
+        localStorage.setItem('users', JSON.stringify(users));
+      },
+      error: (err) => console.error('Failed to load users from db.json:', err)
+    });
+  }
+
+  /** Retrieves the full list of registered users from localStorage. */
+  private getUsers(): User[] {
+    const raw = localStorage.getItem('users');
+    if (!raw) return [];
+    try {
+      return JSON.parse(raw) as User[];
+    } catch {
+      return [];
+    }
+  }
 
   // ── Registration ────────────────────────────────────────────────────────────
 
@@ -32,34 +59,31 @@ export class AuthService {
       return false;
     }
 
-    users.push({ fullName: user.fullName, email: user.email, password: user.password });
-    localStorage.setItem('users', JSON.stringify(users));
-    return true;
-  }
+    const newUser: User = {
+      fullName: user.fullName,
+      name: user.fullName,
+      email: user.email,
+      password: user.password,
+      role: user.role || 'USER'
+    };
 
-  /** Retrieves the full list of registered users from localStorage. */
-  private getUsers(): User[] {
-    const raw = localStorage.getItem('users');
-    if (!raw) return [];
-    try {
-      return JSON.parse(raw) as User[];
-    } catch {
-      return [];
-    }
+    users.push(newUser);
+    localStorage.setItem('users', JSON.stringify(users));
+
+    // Post to db.json to persist it in the JSON server too
+    this.http.post<User>(this.apiUrl, newUser).subscribe({
+      error: (err) => console.error('Failed to post new user to db.json:', err)
+    });
+
+    return true;
   }
 
   // ── Login ───────────────────────────────────────────────────────────────────
 
-  login(email: string, password: string): boolean {
-    // Check hardcoded admin account
-    if (email === 'admin@gmail.com' && password === '123456') {
-      localStorage.setItem('isLoggedIn', 'true');
-      localStorage.setItem('currentUserEmail', 'admin@gmail.com');
-      this.router.navigate(['/dashboard']);
-      return true;
-    }
+  login(email: string, password: string): User | null {
+    // Perform background sync to keep database updated
+    this.syncUsersWithDb();
 
-    // Check registered users stored in localStorage
     const users = this.getUsers();
     const match = users.find(
       (u) => u.email.toLowerCase() === email.toLowerCase() && u.password === password
@@ -68,32 +92,63 @@ export class AuthService {
     if (match) {
       localStorage.setItem('isLoggedIn', 'true');
       localStorage.setItem('currentUserEmail', match.email.toLowerCase());
+      localStorage.setItem(
+        'currentUser',
+        JSON.stringify({
+          fullName: match.fullName || match.name || 'User',
+          email: match.email,
+          role: (match.role || 'USER').toUpperCase() as 'ADMIN' | 'HR' | 'USER'
+        })
+      );
       this.router.navigate(['/dashboard']);
-      return true;
+      return match;
     }
 
-    return false;
+    return null;
   }
 
   // ── Logout ──────────────────────────────────────────────────────────────────
 
   logout(): void {
-    // Remove authentication state only — boards and tasks are preserved
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('currentUserEmail');
+    localStorage.removeItem('currentUser');
     this.router.navigate(['/login']);
   }
 
-  // ── Auth Check ──────────────────────────────────────────────────────────────
+  // ── Auth Checks & Helpers ───────────────────────────────────────────────────
 
-  isAuthenticated(): boolean {
-    return localStorage.getItem('isLoggedIn') === 'true';
+  isLoggedIn(): boolean {
+    return localStorage.getItem('isLoggedIn') === 'true' && localStorage.getItem('currentUser') !== null;
   }
 
-  // ── Current User ─────────────────────────────────────────────────────────────
+  getCurrentUser(): User | null {
+    const raw = localStorage.getItem('currentUser');
+    if (!raw) return null;
+    try {
+      return JSON.parse(raw) as User;
+    } catch {
+      return null;
+    }
+  }
 
-  /** Returns the email of the currently logged-in user, or null if not logged in. */
+  getRole(): 'ADMIN' | 'HR' | 'USER' | null {
+    const user = this.getCurrentUser();
+    return user && user.role ? (user.role.toUpperCase() as 'ADMIN' | 'HR' | 'USER') : null;
+  }
+
+  // ── Legacy Compatibility Aliases ───────────────────────────────────────────
+
+  isAuthenticated(): boolean {
+    return this.isLoggedIn();
+  }
+
+  getCurrentUserRole(): 'ADMIN' | 'HR' | 'USER' | null {
+    return this.getRole();
+  }
+
   getCurrentUserEmail(): string | null {
-    return localStorage.getItem('currentUserEmail');
+    const user = this.getCurrentUser();
+    return user ? user.email : localStorage.getItem('currentUserEmail');
   }
 }

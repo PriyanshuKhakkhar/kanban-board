@@ -24,5 +24,71 @@
       "status": "Done",
       "priority": "High"
     }
+  ],
+  "users": [
+    {
+      "id": "1",
+      "fullName": "Admin",
+      "name": "Admin",
+      "email": "admin@kanban.com",
+      "password": "Admin@123",
+      "role": "ADMIN"
+    },
+    {
+      "id": "2",
+      "fullName": "HR",
+      "name": "HR",
+      "email": "hr@kanban.com",
+      "password": "Hr@123",
+      "role": "HR"
+    },
+    {
+      "id": "3",
+      "fullName": "Priyanshu",
+      "name": "Priyanshu",
+      "email": "priyanshu@kanban.com",
+      "password": "Priyanshu@123",
+      "role": "USER"
+    },
+    {
+      "id": "4",
+      "fullName": "Hasti",
+      "name": "Hasti",
+      "email": "hasti@kanban.com",
+      "password": "Hasti@123",
+      "role": "USER"
+    },
+    {
+      "id": "5",
+      "fullName": "Khushi",
+      "name": "Khushi",
+      "email": "khushi@kanban.com",
+      "password": "Khushi@123",
+      "role": "USER"
+    },
+    {
+      "id": "6",
+      "fullName": "Manav",
+      "name": "Manav",
+      "email": "manav@kanban.com",
+      "password": "Manav@123",
+      "role": "USER"
+    },
+    {
+      "id": "7",
+      "fullName": "Ishan",
+      "name": "Ishan",
+      "email": "ishan@kanban.com",
+      "password": "Ishan@123",
+      "role": "USER"
+    },
+    {
+      "id": "8",
+      "fullName": "Smit",
+      "name": "Smit",
+      "email": "smit@kanban.com",
+      "password": "Smit@123",
+      "role": "USER"
+    }
   ]
 }
