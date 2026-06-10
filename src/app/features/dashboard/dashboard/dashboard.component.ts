@@ -341,7 +341,7 @@ export class DashboardComponent implements OnInit {
   }
 
   addCard(column: 'todo' | 'inprogress' | 'review' | 'done'): void {
-    if (!this.canWriteTasks) return;
+    if (column !== 'todo') return;
     const data: TaskFormDialogData = {
       title: 'Add Task',
       submitLabel: 'Add'
@@ -390,7 +390,7 @@ export class DashboardComponent implements OnInit {
   }
 
   createTask(column: 'todo' | 'inprogress' | 'review' | 'done', title: string) {
-    if (!this.canWriteTasks) return;
+    if (column !== 'todo') return;
     const text = (title || '').trim();
     if (!text) return;
 
@@ -456,12 +456,15 @@ export class DashboardComponent implements OnInit {
 
   updateFilteredTasks() {
     const activeBoardId = this.currentBoard?.id;
-    const boardTasks = this.tasks.filter(t => !t.boardId || t.boardId === activeBoardId);
+    const boardTasks = this.tasks.filter(t => 
+      !t.boardId || 
+      (activeBoardId !== undefined && activeBoardId !== null && String(t.boardId) === String(activeBoardId))
+    );
 
-    this.todoTasks = boardTasks.filter(t => t.status === 'Todo');
-    this.inprogressTasks = boardTasks.filter(t => t.status === 'In Progress');
-    this.reviewTasks = boardTasks.filter(t => t.status === 'Review');
-    this.doneTasks = boardTasks.filter(t => t.status === 'Done');
+    this.todoTasks = boardTasks.filter(t => t.status?.toLowerCase() === 'todo');
+    this.inprogressTasks = boardTasks.filter(t => t.status?.toLowerCase() === 'in progress');
+    this.reviewTasks = boardTasks.filter(t => t.status?.toLowerCase() === 'review');
+    this.doneTasks = boardTasks.filter(t => t.status?.toLowerCase() === 'done');
 
     const filter = this.activeFilter;
     this.filteredTodoTasks = this.filterColumnTasks(this.todoTasks, 'todo', filter);

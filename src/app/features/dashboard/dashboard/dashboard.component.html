@@ -135,7 +135,7 @@
               <h3>To Do</h3>
               <span class="count">{{ filteredTodoTasks.length }}</span>
             </div>
-            <button *ngIf="canWriteTasks" class="add-card" (click)="addCard('todo')">
+            <button class="add-card" (click)="addCard('todo')">
               + Add card
             </button>
           </div>
@@ -209,9 +209,6 @@
               <h3>In Progress</h3>
               <span class="count">{{ filteredInprogressTasks.length }}</span>
             </div>
-            <button *ngIf="canWriteTasks" class="add-card" (click)="addCard('inprogress')">
-              + Add card
-            </button>
           </div>
 
           <div
@@ -283,9 +280,6 @@
               <h3>Review</h3>
               <span class="count">{{ filteredReviewTasks.length }}</span>
             </div>
-            <button *ngIf="canWriteTasks" class="add-card" (click)="addCard('review')">
-              + Add card
-            </button>
           </div>
 
           <div
@@ -357,9 +351,6 @@
               <h3>Done</h3>
               <span class="count">{{ filteredDoneTasks.length }}</span>
             </div>
-            <button *ngIf="canWriteTasks" class="add-card" (click)="addCard('done')">
-              + Add card
-            </button>
           </div>
 
           <div

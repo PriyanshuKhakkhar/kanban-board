@@ -26,7 +26,14 @@
               loginForm.get('usernameOrEmail')?.hasError('required') &&
               loginForm.get('usernameOrEmail')?.touched
             "
-            >Username or email is required</mat-error
+            >Email is required</mat-error
+          >
+          <mat-error
+            *ngIf="
+              loginForm.get('usernameOrEmail')?.hasError('email') &&
+              loginForm.get('usernameOrEmail')?.touched
+            "
+            >Please enter a valid email address</mat-error
           >
         </mat-form-field>
 
@@ -34,10 +41,20 @@
           <mat-label>Password</mat-label>
           <input
             matInput
-            type="password"
+            [type]="hidePassword ? 'password' : 'text'"
             formControlName="password"
             autocomplete="current-password"
           />
+          <button
+            mat-icon-button
+            matSuffix
+            (click)="hidePassword = !hidePassword"
+            [attr.aria-label]="'Hide password'"
+            [attr.aria-pressed]="hidePassword"
+            type="button"
+          >
+            <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+          </button>
           <mat-error
             *ngIf="
               loginForm.get('password')?.hasError('required') &&
@@ -45,7 +62,28 @@
             "
             >Password is required</mat-error
           >
+          <mat-error
+            *ngIf="
+              loginForm.get('password')?.hasError('minlength') &&
+              loginForm.get('password')?.touched
+            "
+            >Password must be at least 8 characters</mat-error
+          >
+          <mat-error
+            *ngIf="
+              loginForm.get('password')?.hasError('maxlength') &&
+              loginForm.get('password')?.touched
+            "
+            >Password cannot exceed 50 characters</mat-error
+          >
         </mat-form-field>
+
+        <div
+          *ngIf="loginForm.hasError('invalidCredentials')"
+          class="error-message global-error"
+        >
+          Invalid email or password.
+        </div>
 
         <div class="remember-row">
           <div class="remember-left">
@@ -60,8 +98,10 @@
           class="primary-btn"
           type="submit"
           (click)="onLogin()"
+          [disabled]="loginForm.invalid || isLoading"
         >
-          Log in
+          <span *ngIf="!isLoading">Log in</span>
+          <span *ngIf="isLoading">Logging in...</span>
         </button>
 
         <div class="divider-text"><span>Or continue with</span></div>
