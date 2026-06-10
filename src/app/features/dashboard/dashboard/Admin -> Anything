@@ -1,0 +1,21 @@
+Admin -> Anything
+
+HR -> All User Functionality -> Move InProgress to Review
+Assign any user
+
+
+User -> Create -> Todo -> inprogress -> Mark As Completed
+Assign Only Self
+
+
+
+Task:
+Title
+Desc
+Priority
+Due Date
+Assign
+
+Create Multiple User
+Update Create Task
+User only Move ToDo -> Inprogress
