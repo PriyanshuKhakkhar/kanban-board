@@ -247,11 +247,11 @@
               </div>
 
               <!-- Mark as Completed Button -->
-              <div class="mark-complete-wrapper" *ngIf="canMarkAsComplete(task)">
+              <!-- <div class="mark-complete-wrapper" *ngIf="canMarkAsComplete(task)">
                 <button class="mark-complete-btn" (click)="markAsCompleted(task)">
                   Mark as Completed
                 </button>
-              </div>
+              </div> -->
               <div class="card-meta" *ngIf="task.priority || task.dueDate">
                 <span class="badge priority" *ngIf="task.priority" [ngClass]="getPriorityClass(task.priority)">
                   {{ task.priority | titlecase }}

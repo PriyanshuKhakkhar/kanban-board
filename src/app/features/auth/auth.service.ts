@@ -62,7 +62,7 @@ export class AuthService {
   }
 
   // ── Login ───────────────────────────────────────────────────────────────────
-
+  // Trims input, checks db.json for matching email/password, and sets localStorage on success.
   login(email: string, password: string): Observable<User | null> {
     const trimmedEmail = email.trim().toLowerCase();
     const trimmedPassword = password.trim();
@@ -97,7 +97,7 @@ export class AuthService {
   }
 
   // ── Logout ──────────────────────────────────────────────────────────────────
-
+  // Clears all auth-related localStorage items and redirects to login page.
   logout(): void {
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('currentUserEmail');

@@ -1,42 +1,5 @@
 {
-  "tasks": [
-    {
-      "id": "1",
-      "title": "Design Login Page",
-      "status": "Todo",
-      "priority": "High"
-    },
-    {
-      "id": "2",
-      "title": "Integrate API",
-      "status": "In Progress",
-      "priority": "Medium"
-    },
-    {
-      "id": "3",
-      "title": "Review Dashboard",
-      "status": "Review",
-      "priority": "Low"
-    },
-    {
-      "id": "4",
-      "title": "Deploy App",
-      "status": "Done",
-      "priority": "High"
-    },
-    {
-      "title": "TEST 1",
-      "description": "test 1ddhdhdh",
-      "priority": "LOW",
-      "dueDate": "2026-06-12T00:00:00.000Z",
-      "assigneeId": "4",
-      "assigneeName": "Hasti",
-      "isComplete": false,
-      "status": "Todo",
-      "boardId": 1,
-      "id": "3FzWb1MB2t0"
-    }
-  ],
+  "tasks": [],
   "users": [
     {
       "id": "1",
