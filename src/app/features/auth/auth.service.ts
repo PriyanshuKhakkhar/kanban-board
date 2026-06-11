@@ -17,7 +17,7 @@ export interface User {
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:3000/users';
+  private apiUrl = 'https://kanban-api-1-vbym.onrender.com/users';
 
   constructor(private router: Router, private http: HttpClient) {}
 

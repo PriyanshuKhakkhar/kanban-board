@@ -8,7 +8,7 @@ import { catchError } from 'rxjs/operators';
 })
 export class TaskService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000/tasks';
+  private apiUrl = 'https://kanban-api-1-vbym.onrender.com/tasks';
 
   // ── Load ──────────────────────────────────────────────────────────────────
   // Always fetches fresh data from db.json. No localStorage involvement.
