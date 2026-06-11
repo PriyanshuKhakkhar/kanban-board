@@ -117,6 +117,21 @@
 .card:hover { transform: translateY(-6px); box-shadow: 0 18px 40px var(--kb-shadow-md); }
 .card-title { font-weight:700; color:var(--kb-text); margin-bottom:6px; }
 .card-desc { color:var(--kb-text-muted); font-size:13px; margin-bottom:8px; }
+
+.assignee-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--kb-text-muted);
+  background: rgba(124, 58, 237, 0.07);
+  border: 1px solid rgba(124, 58, 237, 0.15);
+  border-radius: 20px;
+  padding: 2px 8px;
+  margin-bottom: 6px;
+  width: fit-content;
+}
 .card-meta { display:flex; gap:8px; align-items:center; font-size:12px; color:var(--kb-text-muted); margin-top: 10px; }
 .badge.priority {
   padding:3px 8px;
@@ -305,6 +320,34 @@
 
   &.completed {
     color: #10b981; /* Green for Completed */
+  }
+}
+
+.mark-complete-wrapper {
+  margin-top: 4px;
+  margin-bottom: 8px;
+}
+
+.mark-complete-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+
+  &:hover {
+    background: #10b981;
+    color: #fff;
+    border-color: #10b981;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
   }
 }
 

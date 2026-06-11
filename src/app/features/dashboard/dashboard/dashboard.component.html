@@ -152,8 +152,14 @@
               *ngFor="let task of filteredTodoTasks; let i = index"
               class="card todo-card"
               cdkDrag
+              [cdkDragDisabled]="isUser && !isAssignedToCurrentUser(task)"
             >
               <div class="card-title">{{ task.title }}</div>
+              <!-- Assignee Badge -->
+              <div class="assignee-badge" *ngIf="task.assigneeName">
+                <mat-icon style="font-size: 13px; width: 13px; height: 13px; vertical-align: middle;">person</mat-icon>
+                {{ task.assigneeName }}
+              </div>
               <div class="card-meta" *ngIf="task.priority || task.dueDate">
                 <span class="badge priority" *ngIf="task.priority" [ngClass]="getPriorityClass(task.priority)">
                   {{ task.priority | titlecase }}
@@ -223,15 +229,28 @@
               *ngFor="let task of filteredInprogressTasks; let i = index"
               class="card inprogress-card"
               cdkDrag
+              [cdkDragDisabled]="isUser && !isAssignedToCurrentUser(task)"
             >
               <div class="card-title">{{ task.title }}</div>
+              <!-- Assignee Badge -->
+              <div class="assignee-badge" *ngIf="task.assigneeName">
+                <mat-icon style="font-size: 13px; width: 13px; height: 13px; vertical-align: middle;">person</mat-icon>
+                {{ task.assigneeName }}
+              </div>
               
               <!-- Task Completion Status Indicator -->
               <div class="completion-status-container">
-                <span class="status-indicator-dot" [class.completed]="task.isComplete">●</span>
-                <span class="status-indicator-text" [class.completed]="task.isComplete">
-                  {{ task.isComplete ? 'Completed' : 'Not Completed' }}
+                <span class="status-indicator-dot" [class.completed]="task.isComplete || task.isCompleted">●</span>
+                <span class="status-indicator-text" [class.completed]="task.isComplete || task.isCompleted">
+                  {{ (task.isComplete || task.isCompleted) ? 'Completed' : 'Not Completed' }}
                 </span>
+              </div>
+
+              <!-- Mark as Completed Button -->
+              <div class="mark-complete-wrapper" *ngIf="canMarkAsComplete(task)">
+                <button class="mark-complete-btn" (click)="markAsCompleted(task)">
+                  Mark as Completed
+                </button>
               </div>
               <div class="card-meta" *ngIf="task.priority || task.dueDate">
                 <span class="badge priority" *ngIf="task.priority" [ngClass]="getPriorityClass(task.priority)">
@@ -302,8 +321,14 @@
               *ngFor="let task of filteredReviewTasks; let i = index"
               class="card review-card"
               cdkDrag
+              [cdkDragDisabled]="isUser && !isAssignedToCurrentUser(task)"
             >
               <div class="card-title">{{ task.title }}</div>
+              <!-- Assignee Badge -->
+              <div class="assignee-badge" *ngIf="task.assigneeName">
+                <mat-icon style="font-size: 13px; width: 13px; height: 13px; vertical-align: middle;">person</mat-icon>
+                {{ task.assigneeName }}
+              </div>
               <div class="card-meta" *ngIf="task.priority || task.dueDate">
                 <span class="badge priority" *ngIf="task.priority" [ngClass]="getPriorityClass(task.priority)">
                   {{ task.priority | titlecase }}
@@ -373,8 +398,14 @@
               *ngFor="let task of filteredDoneTasks; let i = index"
               class="card done-card"
               cdkDrag
+              [cdkDragDisabled]="isUser && !isAssignedToCurrentUser(task)"
             >
               <div class="card-title">{{ task.title }}</div>
+              <!-- Assignee Badge -->
+              <div class="assignee-badge" *ngIf="task.assigneeName">
+                <mat-icon style="font-size: 13px; width: 13px; height: 13px; vertical-align: middle;">person</mat-icon>
+                {{ task.assigneeName }}
+              </div>
               <div class="card-meta" *ngIf="task.priority || task.dueDate">
                 <span class="badge priority" *ngIf="task.priority" [ngClass]="getPriorityClass(task.priority)">
                   {{ task.priority | titlecase }}

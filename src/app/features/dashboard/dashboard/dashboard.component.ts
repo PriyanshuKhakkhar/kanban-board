@@ -112,12 +112,14 @@ export class DashboardComponent implements OnInit {
   }
 
   canEditTask(task: any): boolean {
-    if (this.isAdmin || this.isHR || this.isUser) return true;
+    if (this.isAdmin || this.isHR) return true;
+    if (this.isUser && this.isAssignedToCurrentUser(task)) return true;
     return false;
   }
 
   canDeleteTask(task: any): boolean {
-    if (this.isAdmin || this.isUser) return true;
+    if (this.isAdmin || this.isHR) return true;
+    if (this.isUser && this.isAssignedToCurrentUser(task)) return true;
     return false;
   }
 
@@ -460,7 +462,7 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  isMoveAllowed(previousColumn: string, currentColumn: string): boolean {
+  isMoveAllowed(previousColumn: string, currentColumn: string, task: any): boolean {
     const role = this.authService.getCurrentUserRole() || 'USER';
 
     // Once Task is Done then No one can revert it
@@ -473,10 +475,13 @@ export class DashboardComponent implements OnInit {
       return true;
     }
 
-    // HR can move: Todo -> In Progress, In Progress -> Review, Review -> Done
+    // HR can move:
+    // - Todo -> In Progress (only if assigned to HR ownself)
+    // - In Progress -> Review
+    // - Review -> Done (Completed)
     if (role === 'HR') {
       if (previousColumn === 'todo' && currentColumn === 'inprogress') {
-        return true;
+        return this.isAssignedToCurrentUser(task);
       }
       if (previousColumn === 'inprogress' && currentColumn === 'review') {
         return true;
@@ -487,12 +492,13 @@ export class DashboardComponent implements OnInit {
       return false;
     }
 
-    // USER can move tasks: Todo -> In Progress, In Progress -> Review
+    // USER can move tasks: Todo -> In Progress only, and only if the task is assigned to them
     if (role === 'USER') {
       if (previousColumn === 'todo' && currentColumn === 'inprogress') {
-        return true;
-      }
-      if (previousColumn === 'inprogress' && currentColumn === 'review') {
+        if (!this.isAssignedToCurrentUser(task)) {
+          alert('You can only update tasks assigned to you.');
+          return false;
+        }
         return true;
       }
       return false;
@@ -511,7 +517,7 @@ export class DashboardComponent implements OnInit {
       const draggedTask = event.previousContainer.data[event.previousIndex];
 
       // 1. Check if the role is allowed to perform this transition
-      if (!this.isMoveAllowed(previousColumn, currentColumn)) {
+      if (!this.isMoveAllowed(previousColumn, currentColumn, draggedTask)) {
         alert("You are not authorized to move this task to that status.");
         this.loadApiTasks();
         return;
@@ -519,7 +525,7 @@ export class DashboardComponent implements OnInit {
 
       // 2. Validate the isComplete condition for In Progress -> Review
       if (previousColumn === 'inprogress' && currentColumn === 'review') {
-        if (!draggedTask.isComplete) {
+        if (!draggedTask.isComplete && !draggedTask.isCompleted) {
           alert("Please mark the task as complete before moving it to Review.");
           this.loadApiTasks();
           return;
@@ -562,7 +568,7 @@ export class DashboardComponent implements OnInit {
 
   updateFilteredTasks() {
     const activeBoardId = this.currentBoard?.id;
-    const boardTasks = this.tasks.filter(t => 
+    let boardTasks = this.tasks.filter(t => 
       !t.boardId || 
       (activeBoardId !== undefined && activeBoardId !== null && String(t.boardId) === String(activeBoardId))
     );
@@ -573,10 +579,40 @@ export class DashboardComponent implements OnInit {
     this.doneTasks = boardTasks.filter(t => t.status?.toLowerCase() === 'done');
 
     const filter = this.activeFilter;
-    this.filteredTodoTasks = this.filterColumnTasks(this.todoTasks, 'todo', filter);
-    this.filteredInprogressTasks = this.filterColumnTasks(this.inprogressTasks, 'inprogress', filter);
-    this.filteredReviewTasks = this.filterColumnTasks(this.reviewTasks, 'review', filter);
-    this.filteredDoneTasks = this.filterColumnTasks(this.doneTasks, 'done', filter);
+    this.filteredTodoTasks = this.sortByPriority(this.filterColumnTasks(this.todoTasks, 'todo', filter));
+    this.filteredInprogressTasks = this.sortByPriority(this.filterColumnTasks(this.inprogressTasks, 'inprogress', filter));
+    this.filteredReviewTasks = this.sortByPriority(this.filterColumnTasks(this.reviewTasks, 'review', filter));
+    this.filteredDoneTasks = this.sortByPriority(this.filterColumnTasks(this.doneTasks, 'done', filter));
+  }
+
+  private sortByPriority(tasks: any[]): any[] {
+    const order: Record<string, number> = { HIGH: 0, MEDIUM: 1, LOW: 2 };
+    return [...tasks].sort((a, b) => {
+      const pa = order[(a.priority || '').toUpperCase()] ?? 99;
+      const pb = order[(b.priority || '').toUpperCase()] ?? 99;
+      return pa - pb;
+    });
+  }
+
+  canMarkAsComplete(task: any): boolean {
+    if (task.isComplete || task.isCompleted) return false;
+    const role = this.authService.getCurrentUserRole() || 'USER';
+    if (role === 'ADMIN') return true;
+    return this.isAssignedToCurrentUser(task);
+  }
+
+  markAsCompleted(task: any): void {
+    const updated = {
+      ...task,
+      isComplete: true,
+      isCompleted: true
+    };
+    this.taskService.updateTask(updated).subscribe({
+      next: () => {
+        this.loadApiTasks();
+      },
+      error: (err) => console.error('Error marking task as complete:', err)
+    });
   }
 
   getStatusFromColumnId(columnId: string): string {

@@ -53,6 +53,8 @@ export class TaskFormDialogComponent implements OnInit {
       isComplete: [false]
     });
 
+    const role = this.authService.getRole() || 'USER';
+
     // Populate form if task is being edited
     if (this.data.task) {
       let initialDateStr = '';
@@ -73,9 +75,70 @@ export class TaskFormDialogComponent implements OnInit {
         _assigneeSearch: this.data.task.assigneeName ?? '',
         isComplete: this.data.task.isComplete ?? false
       });
+
+      if ((role === 'HR' || role === 'USER') && !this.isAssignedToCurrentUser(this.data.task)) {
+        this.form.get('isComplete')?.disable();
+      }
+    } else {
+      // Auto-fill logged in user if USER role is creating a task
+      if (role === 'USER') {
+        const currentUser = this.authService.getCurrentUser();
+        const email = currentUser?.email;
+        const raw = localStorage.getItem('users');
+        let foundUser: User | null = null;
+        if (raw && email) {
+          try {
+            const users = JSON.parse(raw) as User[];
+            foundUser = users.find(u => u.email.toLowerCase() === email.toLowerCase()) || null;
+          } catch {}
+        }
+        if (foundUser) {
+          const id = foundUser.id !== undefined && foundUser.id !== null ? String(foundUser.id) : foundUser.email;
+          this.form.patchValue({
+            assigneeId: id,
+            assigneeName: foundUser.fullName,
+            _assigneeSearch: foundUser.fullName
+          });
+        }
+      }
+    }
+
+    // Disable assignment selection for regular user
+    if (role === 'USER') {
+      this.form.get('_assigneeSearch')?.disable();
     }
 
     this.loadUsers();
+  }
+
+  isAssignedToCurrentUser(task: Task | undefined): boolean {
+    if (!task) return false;
+    const email = this.authService.getCurrentUserEmail();
+    if (!email) return false;
+    
+    let loggedInId: string | null = null;
+    const raw = localStorage.getItem('users');
+    if (raw) {
+      try {
+        const users = JSON.parse(raw) as any[];
+        const found = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+        if (found) loggedInId = String(found.id);
+      } catch {}
+    }
+
+    if (loggedInId && task.assigneeId && String(task.assigneeId) === String(loggedInId)) {
+      return true;
+    }
+    const currentUser = this.authService.getCurrentUser();
+    if (currentUser) {
+      if (task.assigneeName && currentUser.fullName && task.assigneeName.toLowerCase() === currentUser.fullName.toLowerCase()) {
+        return true;
+      }
+      if (task.assigneeId && currentUser.email && String(task.assigneeId).toLowerCase() === currentUser.email.toLowerCase()) {
+        return true;
+      }
+    }
+    return false;
   }
 
   loadUsers(): void {
@@ -84,9 +147,15 @@ export class TaskFormDialogComponent implements OnInit {
         const role = this.authService.getRole() || 'USER';
         if (role === 'ADMIN') {
           this.allUsers = users;
+        } else if (role === 'HR') {
+          // HR can assign to any user except ADMIN
+          this.allUsers = users.filter(u => u.role?.toUpperCase() !== 'ADMIN');
         } else {
-          // HR and USER can only assign to role USER
-          this.allUsers = users.filter(u => u.role?.toUpperCase() === 'USER');
+          // USER can only assign to self
+          const currentUser = this.authService.getCurrentUser();
+          const email = currentUser?.email;
+          const found = users.find(u => u.email.toLowerCase() === email?.toLowerCase());
+          this.allUsers = found ? [found] : [];
         }
         this.filteredUsers = this.allUsers;
       },
@@ -156,15 +225,57 @@ export class TaskFormDialogComponent implements OnInit {
     this.form.markAllAsTouched();
     if (this.form.invalid) return;
 
-    const formVal = this.form.value;
+    const formVal = this.form.getRawValue();
+
+    // Security check: USER role can only assign to themselves.
+    const role = this.authService.getRole() || 'USER';
+    let finalAssigneeId = formVal.assigneeId;
+    let finalAssigneeName = formVal.assigneeName;
+    if (role === 'USER') {
+      const currentUser = this.authService.getCurrentUser();
+      const email = currentUser?.email;
+      const raw = localStorage.getItem('users');
+      let foundUser: User | null = null;
+      if (raw && email) {
+        try {
+          const users = JSON.parse(raw) as User[];
+          foundUser = users.find(u => u.email.toLowerCase() === email.toLowerCase()) || null;
+        } catch {}
+      }
+      if (foundUser) {
+        finalAssigneeId = foundUser.id !== undefined && foundUser.id !== null ? String(foundUser.id) : foundUser.email;
+        finalAssigneeName = foundUser.fullName;
+      }
+    }
+
+    // Security check: HR cannot assign tasks to Admin.
+    if (role === 'HR') {
+      const raw = localStorage.getItem('users');
+      let isSelAdmin = false;
+      if (raw && formVal.assigneeId) {
+        try {
+          const users = JSON.parse(raw) as User[];
+          const sel = users.find(u => String(u.id) === String(formVal.assigneeId) || u.email.toLowerCase() === String(formVal.assigneeId).toLowerCase());
+          if (sel?.role?.toUpperCase() === 'ADMIN') {
+            isSelAdmin = true;
+          }
+        } catch {}
+      }
+      if (isSelAdmin) {
+        alert("HR is not allowed to assign tasks to Admin.");
+        return;
+      }
+    }
+
     const taskResult: Partial<Task> = {
       title: formVal.title.trim(),
       description: formVal.description.trim(),
       priority: formVal.priority as 'HIGH' | 'MEDIUM' | 'LOW',
       dueDate: new Date(formVal.dueDate),
-      assigneeId: formVal.assigneeId,
-      assigneeName: formVal.assigneeName,
-      isComplete: formVal.isComplete === true
+      assigneeId: finalAssigneeId,
+      assigneeName: finalAssigneeName,
+      isComplete: formVal.isComplete === true,
+      isCompleted: formVal.isComplete === true
     };
 
     this.dialogRef.close(taskResult);

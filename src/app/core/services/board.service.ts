@@ -14,6 +14,7 @@ export interface Task {
   assigneeId?: any;
   assigneeName?: string;
   isComplete?: boolean;
+  isCompleted?: boolean;
 }
 
 export interface Board {
