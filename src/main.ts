@@ -3,7 +3,6 @@ import { appConfig } from './app/app.config';
 import { AppComponent } from './app/app.component';
 
 // Diagnostics: log startup and show any uncaught errors in-page for debugging
-console.log('main.ts loading');
 window.addEventListener('error', (ev) => {
   console.error('Global error', ev.error || ev.message, ev);
   const el = document.getElementById('static-fallback');

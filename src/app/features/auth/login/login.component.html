@@ -12,7 +12,7 @@
         <h2 class="card-title login-title">Log in to continue</h2>
       </div>
 
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+      <form [formGroup]="loginForm" (ngSubmit)="performLogin()" class="login-form">
         <mat-form-field appearance="outline" class="full-width form-group">
           <mat-label>Username or email</mat-label>
           <input
@@ -97,7 +97,7 @@
           color="primary"
           class="primary-btn"
           type="submit"
-          (click)="onLogin()"
+          (click)="performLogin()"
           [disabled]="loginForm.invalid || isLoading"
         >
           <span *ngIf="!isLoading">Log in</span>

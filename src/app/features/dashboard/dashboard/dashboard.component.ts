@@ -81,16 +81,12 @@ export class DashboardComponent implements OnInit {
   }
 
   get currentUserId(): string | null {
-    const email = this.authService.getCurrentUserEmail();
-    if (!email) return null;
-    const raw = localStorage.getItem('users');
-    if (raw) {
-      try {
-        const users = JSON.parse(raw) as any[];
-        const found = users.find(u => u.email.toLowerCase() === email.toLowerCase());
-        if (found) return String(found.id);
-      } catch {}
-    }
+    // Resolve from the current session — ID is stored on the user object
+    // stored in currentUser if available, otherwise fall back to null
+    // and let the name/email fallbacks in isAssignedToCurrentUser handle it.
+    const currentUser = this.authService.getCurrentUser() as any;
+    if (!currentUser) return null;
+    if (currentUser.id !== undefined && currentUser.id !== null) return String(currentUser.id);
     return null;
   }
 

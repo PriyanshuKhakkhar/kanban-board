@@ -35,18 +35,10 @@ export class LoginComponent {
       password: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(50)]],
       remember: [false]
     });
-    console.log('LoginComponent constructed');
   }
-
-  onSubmit(): void {
-    this.performLogin();
-  }
-
-  onLogin(): void {
-    this.performLogin();
-  }
-
-  private performLogin(): void {
+// When user clicks login performLogin() is called check the login form and is loading true or not if form is invalid then marks all as touched and show validation errro but if valid then 
+// username and password is get from form and check auth.service and wait for server response if invalid then show invalid credentials but if valid then login success and navigate to dashboard 
+   performLogin(): void {
     if (this.loginForm.valid && !this.isLoading) {
       this.isLoading = true;
       const { usernameOrEmail, password } = this.loginForm.value;
@@ -68,12 +60,6 @@ export class LoginComponent {
       });
     } else if (!this.loginForm.valid) {
       this.loginForm.markAllAsTouched();
-    }
-  }
-
-  onLoginWithGoogle(): void {
-    if (this.loginForm.valid) {
-      this.router.navigate(['/dashboard']);
     }
   }
 

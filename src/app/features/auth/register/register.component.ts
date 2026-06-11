@@ -33,14 +33,14 @@ export class RegisterComponent {
 
   onSubmit(): void {
     if (this.registerForm.valid) {
-      const success = this.authService.register(this.registerForm.value);
-
-      if (success) {
-        this.router.navigate(['/login']);
-      } else {
-        // Email already registered — mark field with a custom error
-        this.registerForm.get('email')?.setErrors({ emailTaken: true });
-      }
+      this.authService.register(this.registerForm.value).subscribe((success) => {
+        if (success) {
+          this.router.navigate(['/login']);
+        } else {
+          // Email already registered — mark field with a custom error
+          this.registerForm.get('email')?.setErrors({ emailTaken: true });
+        }
+      });
     } else {
       this.registerForm.markAllAsTouched();
     }

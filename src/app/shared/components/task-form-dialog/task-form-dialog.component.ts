@@ -26,6 +26,8 @@ export class TaskFormDialogComponent implements OnInit {
   allUsers: User[] = [];
   filteredUsers: User[] = [];
   isDropdownOpen = false;
+  /** Email of the logged-in USER — used to auto-fill assignee after allUsers is loaded. */
+  _autoFillUserEmail: string | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -83,22 +85,13 @@ export class TaskFormDialogComponent implements OnInit {
       // Auto-fill logged in user if USER role is creating a task
       if (role === 'USER') {
         const currentUser = this.authService.getCurrentUser();
+        // allUsers is populated by loadUsers() called at the end of ngOnInit;
+        // find self from the already-fetched list after it arrives.
         const email = currentUser?.email;
-        const raw = localStorage.getItem('users');
-        let foundUser: User | null = null;
-        if (raw && email) {
-          try {
-            const users = JSON.parse(raw) as User[];
-            foundUser = users.find(u => u.email.toLowerCase() === email.toLowerCase()) || null;
-          } catch {}
-        }
-        if (foundUser) {
-          const id = foundUser.id !== undefined && foundUser.id !== null ? String(foundUser.id) : foundUser.email;
-          this.form.patchValue({
-            assigneeId: id,
-            assigneeName: foundUser.fullName,
-            _assigneeSearch: foundUser.fullName
-          });
+        if (email) {
+          // Patch immediately if allUsers already has data, otherwise loadUsers
+          // will handle it via the subscription below.
+          this._autoFillUserEmail = email;
         }
       }
     }
@@ -113,30 +106,21 @@ export class TaskFormDialogComponent implements OnInit {
 
   isAssignedToCurrentUser(task: Task | undefined): boolean {
     if (!task) return false;
-    const email = this.authService.getCurrentUserEmail();
-    if (!email) return false;
-    
-    let loggedInId: string | null = null;
-    const raw = localStorage.getItem('users');
-    if (raw) {
-      try {
-        const users = JSON.parse(raw) as any[];
-        const found = users.find(u => u.email.toLowerCase() === email.toLowerCase());
-        if (found) loggedInId = String(found.id);
-      } catch {}
-    }
+    const currentUser = this.authService.getCurrentUser() as any;
+    if (!currentUser) return false;
 
-    if (loggedInId && task.assigneeId && String(task.assigneeId) === String(loggedInId)) {
+    // Try ID match from session
+    const loggedInId = currentUser.id !== undefined && currentUser.id !== null ? String(currentUser.id) : null;
+    if (loggedInId && task.assigneeId && String(task.assigneeId) === loggedInId) {
       return true;
     }
-    const currentUser = this.authService.getCurrentUser();
-    if (currentUser) {
-      if (task.assigneeName && currentUser.fullName && task.assigneeName.toLowerCase() === currentUser.fullName.toLowerCase()) {
-        return true;
-      }
-      if (task.assigneeId && currentUser.email && String(task.assigneeId).toLowerCase() === currentUser.email.toLowerCase()) {
-        return true;
-      }
+    // Name match
+    if (task.assigneeName && currentUser.fullName && task.assigneeName.toLowerCase() === currentUser.fullName.toLowerCase()) {
+      return true;
+    }
+    // Email fallback
+    if (task.assigneeId && currentUser.email && String(task.assigneeId).toLowerCase() === currentUser.email.toLowerCase()) {
+      return true;
     }
     return false;
   }
@@ -158,6 +142,20 @@ export class TaskFormDialogComponent implements OnInit {
           this.allUsers = found ? [found] : [];
         }
         this.filteredUsers = this.allUsers;
+
+        // Auto-fill assignee for USER role when creating a new task
+        if (this._autoFillUserEmail && !this.data.task) {
+          const self = this.allUsers.find(u => u.email.toLowerCase() === this._autoFillUserEmail!.toLowerCase());
+          if (self) {
+            const id = self.id !== undefined && self.id !== null ? String(self.id) : self.email;
+            this.form.patchValue({
+              assigneeId: id,
+              assigneeName: self.fullName,
+              _assigneeSearch: self.fullName
+            });
+          }
+          this._autoFillUserEmail = null;
+        }
       },
       error: (err) => console.error('Failed to load users for task assignment:', err)
     });
@@ -233,37 +231,29 @@ export class TaskFormDialogComponent implements OnInit {
     let finalAssigneeName = formVal.assigneeName;
     if (role === 'USER') {
       const currentUser = this.authService.getCurrentUser();
-      const email = currentUser?.email;
-      const raw = localStorage.getItem('users');
-      let foundUser: User | null = null;
-      if (raw && email) {
-        try {
-          const users = JSON.parse(raw) as User[];
-          foundUser = users.find(u => u.email.toLowerCase() === email.toLowerCase()) || null;
-        } catch {}
-      }
-      if (foundUser) {
-        finalAssigneeId = foundUser.id !== undefined && foundUser.id !== null ? String(foundUser.id) : foundUser.email;
-        finalAssigneeName = foundUser.fullName;
+      if (currentUser) {
+        // Find self in the already-loaded allUsers list for the numeric ID
+        const selfInList = this.allUsers.find(u => u.email.toLowerCase() === currentUser.email.toLowerCase());
+        if (selfInList) {
+          finalAssigneeId = selfInList.id !== undefined && selfInList.id !== null ? String(selfInList.id) : selfInList.email;
+          finalAssigneeName = selfInList.fullName;
+        } else {
+          // Fallback: use session data
+          finalAssigneeId = currentUser.email;
+          finalAssigneeName = currentUser.fullName;
+        }
       }
     }
 
     // Security check: HR cannot assign tasks to Admin.
     if (role === 'HR') {
-      const raw = localStorage.getItem('users');
-      let isSelAdmin = false;
-      if (raw && formVal.assigneeId) {
-        try {
-          const users = JSON.parse(raw) as User[];
-          const sel = users.find(u => String(u.id) === String(formVal.assigneeId) || u.email.toLowerCase() === String(formVal.assigneeId).toLowerCase());
-          if (sel?.role?.toUpperCase() === 'ADMIN') {
-            isSelAdmin = true;
-          }
-        } catch {}
-      }
-      if (isSelAdmin) {
-        alert("HR is not allowed to assign tasks to Admin.");
-        return;
+      // Use the already-loaded allUsers list for the admin check
+      if (formVal.assigneeId) {
+        const sel = this.allUsers.find(u => String(u.id) === String(formVal.assigneeId) || u.email.toLowerCase() === String(formVal.assigneeId).toLowerCase());
+        if (sel?.role?.toUpperCase() === 'ADMIN') {
+          alert('HR is not allowed to assign tasks to Admin.');
+          return;
+        }
       }
     }
 
