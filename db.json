@@ -1,5 +1,102 @@
 {
-  "tasks": [],
+  "tasks": [
+    {
+      "title": "Test 1",
+      "description": "Test 1 and review",
+      "priority": "MEDIUM",
+      "dueDate": "2026-06-14T00:00:00.000Z",
+      "assigneeId": "2",
+      "assigneeName": "HR",
+      "isComplete": false,
+      "status": "Todo",
+      "boardId": 1,
+      "id": "h-YKkGRv2O8"
+    },
+    {
+      "title": "Test 2",
+      "description": "Test 2 and Review",
+      "priority": "HIGH",
+      "dueDate": "2026-06-12T00:00:00.000Z",
+      "assigneeId": "3",
+      "assigneeName": "Priyanshu",
+      "isComplete": true,
+      "status": "Done",
+      "boardId": 1,
+      "id": "VLGj9klREIs"
+    },
+    {
+      "title": "TEST 3",
+      "description": "TEST 3 and Review",
+      "priority": "HIGH",
+      "dueDate": "2026-06-12T00:00:00.000Z",
+      "assigneeId": "4",
+      "assigneeName": "Hasti",
+      "isComplete": true,
+      "status": "Review",
+      "boardId": 1,
+      "id": "4Q2aAAT2ZsQ"
+    },
+    {
+      "title": "TEST 4",
+      "description": "TEST 4 and review",
+      "priority": "MEDIUM",
+      "dueDate": "2026-06-15T00:00:00.000Z",
+      "assigneeId": "5",
+      "assigneeName": "Khushi",
+      "isComplete": false,
+      "status": "In Progress",
+      "boardId": 1,
+      "id": "w3KkQF8CYtM"
+    },
+    {
+      "title": "TEST 5",
+      "description": "TEST 5 and Review",
+      "priority": "LOW",
+      "dueDate": "2026-06-18T00:00:00.000Z",
+      "assigneeId": "7",
+      "assigneeName": "Ishan",
+      "isComplete": false,
+      "status": "Todo",
+      "boardId": 1,
+      "id": "jyh7sAM5Ags"
+    },
+    {
+      "title": "TEST 6",
+      "description": "TEST 6 and review",
+      "priority": "LOW",
+      "dueDate": "2026-06-20T00:00:00.000Z",
+      "assigneeId": "8",
+      "assigneeName": "Smit",
+      "isComplete": false,
+      "status": "Todo",
+      "boardId": 1,
+      "id": "wefD9MJB8MY"
+    },
+    {
+      "title": "TEST 7",
+      "description": "Test 7 and review",
+      "priority": "MEDIUM",
+      "dueDate": "2026-06-23T00:00:00.000Z",
+      "assigneeId": "wsSE6vhZNKE",
+      "assigneeName": "Yash",
+      "isComplete": false,
+      "status": "In Progress",
+      "boardId": 1,
+      "id": "rUWBl8HWuTg"
+    },
+    {
+      "title": "Test 8",
+      "description": "Test 8 and Review",
+      "priority": "HIGH",
+      "dueDate": "2026-06-11T00:00:00.000Z",
+      "assigneeId": "6",
+      "assigneeName": "Manav",
+      "isComplete": false,
+      "status": "Todo",
+      "boardId": 1,
+      "id": "AusqJYKedvA"
+    }
+  ],
   "users": [
     {
       "id": "1",
@@ -72,6 +169,14 @@
       "password": "Yash@123",
       "role": "USER",
       "id": "wsSE6vhZNKE"
+    },
+    {
+      "fullName": "Parth",
+      "name": "Parth",
+      "email": "parth@kanban.com",
+      "password": "parth@123",
+      "role": "USER",
+      "id": "pHu4Yya3QHk"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

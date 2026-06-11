@@ -108,14 +108,19 @@ export class DashboardComponent implements OnInit {
   }
 
   canEditTask(task: any): boolean {
-    if (this.isAdmin || this.isHR) return true;
-    if (this.isUser && this.isAssignedToCurrentUser(task)) return true;
+    // Done tasks are immutable — nobody can edit them
+    if (task.status?.toLowerCase() === 'done') return false;
+    // Only Admin or the assigned user can edit
+    if (this.isAdmin) return true;
+    if (this.isAssignedToCurrentUser(task)) return true;
     return false;
   }
 
   canDeleteTask(task: any): boolean {
-    if (this.isAdmin || this.isHR) return true;
-    if (this.isUser && this.isAssignedToCurrentUser(task)) return true;
+    // Done tasks are immutable — nobody can delete them
+    if (task.status?.toLowerCase() === 'done') return false;
+    // Only Admin can delete tasks
+    if (this.isAdmin) return true;
     return false;
   }
 
@@ -461,20 +466,20 @@ export class DashboardComponent implements OnInit {
   isMoveAllowed(previousColumn: string, currentColumn: string, task: any): boolean {
     const role = this.authService.getCurrentUserRole() || 'USER';
 
-    // Once Task is Done then No one can revert it
-    if (previousColumn === 'done' && currentColumn !== 'done') {
+    // Done is immutable — nobody can move out of Done
+    if (previousColumn === 'done') {
       return false;
     }
 
-    // ADMIN has full permissions
+    // ADMIN: can move any non-Done task forward through the pipeline
     if (role === 'ADMIN') {
       return true;
     }
 
-    // HR can move:
-    // - Todo -> In Progress (only if assigned to HR ownself)
-    // - In Progress -> Review
-    // - Review -> Done (Completed)
+    // HR:
+    //   - Todo → In Progress  (only if HR is the assignee)
+    //   - In Progress → Review (task must be marked complete first — checked in drop())
+    // HR cannot move Review → Done (only Admin can do that)
     if (role === 'HR') {
       if (previousColumn === 'todo' && currentColumn === 'inprogress') {
         return this.isAssignedToCurrentUser(task);
@@ -482,17 +487,14 @@ export class DashboardComponent implements OnInit {
       if (previousColumn === 'inprogress' && currentColumn === 'review') {
         return true;
       }
-      if (previousColumn === 'review' && currentColumn === 'done') {
-        return true;
-      }
       return false;
     }
 
-    // USER can move tasks: Todo -> In Progress only, and only if the task is assigned to them
+    // USER: Todo → In Progress only, and only if the task is assigned to them
     if (role === 'USER') {
       if (previousColumn === 'todo' && currentColumn === 'inprogress') {
         if (!this.isAssignedToCurrentUser(task)) {
-          alert('You can only update tasks assigned to you.');
+          alert('You can only move tasks that are assigned to you.');
           return false;
         }
         return true;
@@ -591,10 +593,14 @@ export class DashboardComponent implements OnInit {
   }
 
   canMarkAsComplete(task: any): boolean {
+    // Done tasks are already complete — hide the button
+    if (task.status?.toLowerCase() === 'done') return false;
+    // Already marked complete — hide the button
     if (task.isComplete || task.isCompleted) return false;
-    const role = this.authService.getCurrentUserRole() || 'USER';
-    if (role === 'ADMIN') return true;
-    return this.isAssignedToCurrentUser(task);
+    // Only Admin or the assigned user can mark complete
+    if (this.isAdmin) return true;
+    if (this.isAssignedToCurrentUser(task)) return true;
+    return false;
   }
 
   markAsCompleted(task: any): void {
